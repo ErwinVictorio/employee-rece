@@ -1,0 +1,29 @@
+﻿.winner-spotlight { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at 26% 32%, transparent 10%, #08132412 45%, #08132488 95%); }
+.spotlight-kicker { position: absolute; top: 28px; left: 30px; display: flex; align-items: center; gap: 10px; color: #e9c46f; font-size: 11px; font-weight: 800; letter-spacing: 3px; }
+.spotlight-kicker span { font-size: 22px; }
+.spotlight-card { position: absolute; top: 50%; right: 5%; width: min(37%, 430px); transform: translateY(-50%); padding: 26px; text-align: center; border: 1px solid #c49b4c55; border-radius: 25px; background: linear-gradient(150deg,#1e2d46d9,#0c1629ee); box-shadow: 0 20px 60px #0004, inset 0 1px 0 #e6c17e24; pointer-events: auto; }
+.spotlight-place { display: block; width: fit-content; margin: 0 auto 21px; padding: 8px 20px; background: linear-gradient(135deg,#ffe4a4,#e8ad36); color: #37260c; border-radius: 30px; font-size: 11px; font-weight: 900; letter-spacing: 3px; }
+.spotlight-card .racer-portrait { width: 65px; height: 65px; border-width: 3px; margin-bottom: 16px; }
+.spotlight-card .eyebrow { font-size: 9px; letter-spacing: 2px; color: #93aac6; margin: 0 0 10px; }
+.spotlight-card h2 { color: #fff4d7; font-size: clamp(26px,3vw,44px); font-weight: 850; line-height: 1.12; margin: 0; overflow-wrap: anywhere; outline: none; }
+.spotlight-time { margin: 22px 0 16px; }
+.spotlight-time strong { display: block; color: #ffcf70; font-size: 39px; line-height: 1; font-variant-numeric: tabular-nums; }
+.spotlight-time strong small { font-size: 20px; margin-left: 4px; }
+.spotlight-time>span { display: block; color: #8fa6c3; font-size: 8px; letter-spacing: 3px; margin-top: 8px; }
+.spotlight-note { color: #9fb3ce; font-size: 12px; line-height: 1.7; }
+.spotlight-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 22px; }
+.spotlight-actions button { font-size: 12px; padding: 12px 18px; }
+.spotlight-disclaimer { display: block; font-size: 8px; color: #8094b0; margin-top: 16px; }
+.compact-results { margin-top: 18px; padding: 22px; }
+.compact-results .results-actions { margin: 0; }
+@media(max-width:900px) and (min-width:701px) { .spotlight-card { right: 3%; width: 40%; padding: 20px; }.spotlight-card h2 { font-size: 27px; }.spotlight-actions { flex-direction: column; } }
+@media(max-width:700px) {
+ .spotlight-kicker { top: 18px; left: 18px; font-size: 9px; letter-spacing: 2px; }
+ .spotlight-card { top: auto; bottom: 16px; left: 14px; right: 14px; width: auto; transform: none; padding: 15px 16px; border-radius: 19px; }
+ .spotlight-place { padding: 5px 13px; font-size: 9px; margin: 0 auto 8px; letter-spacing: 2px; }
+ .spotlight-card .racer-portrait { position: absolute; top: 15px; left: 16px; width: 38px; height: 38px; border-width: 2px; }
+ .spotlight-card .eyebrow { font-size: 7px; margin-bottom: 6px; }
+ .spotlight-card h2 { font-size: 25px; }
+ .spotlight-time { margin: 12px 0 8px; }.spotlight-time strong { font-size: 28px; }.spotlight-time>span { font-size: 7px; margin-top: 4px; }
+ .spotlight-note { display: none; }.spotlight-actions { margin-top: 12px; }.spotlight-actions button { flex: 1; font-size: 11px; padding: 10px 12px; }.spotlight-disclaimer { margin-top: 10px; font-size: 7px; }
+}

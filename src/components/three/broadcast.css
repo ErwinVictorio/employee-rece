@@ -1,0 +1,65 @@
+/* Broadcast presentation, inspired by the supplied sprint-cup reference. */
+.prototype-stadium { border-color: #456273; border-radius: 22px; box-shadow: 0 18px 65px #0004; }
+.prototype-stadium .three-viewport { height: clamp(540px, 49vw, 790px); isolation: isolate; background: #80b5a0; }
+.race-broadcast { position: absolute; inset: 0; pointer-events: none; z-index: 3; color: #f7f9ff; }
+.broadcast-title, .broadcast-timer, .broadcast-board { background: linear-gradient(145deg, #182a40f5, #111a30f2); border: 1px solid #94b1c17a; box-shadow: 0 7px 20px #071b3140, inset 0 1px 0 #d7e6ff1c; }
+.broadcast-title { position: absolute; left: 22px; top: 20px; padding: 14px 24px 14px 16px; display: flex; align-items: center; gap: 13px; border-radius: 24px; }
+.broadcast-title>svg { width: 44px; height: 44px; color: #20a4ff; }
+.broadcast-title strong { display: block; font-size: clamp(17px, 1.65vw, 26px); letter-spacing: -.7px; font-weight: 850; }
+.broadcast-title small { display: block; color: #b1c1d8; margin-top: 5px; font-size: 10px; font-weight: 750; letter-spacing: 1.5px; }
+.broadcast-title small span { color: #399be7; margin: 0 6px; }
+.broadcast-timer { position: absolute; top: 20px; right: 22px; border-radius: 23px; padding: 12px 22px; display: flex; align-items: center; gap: 13px; }
+.broadcast-timer svg { width: 36px; height: 36px; fill: none; stroke: #21a3ff; stroke-width: 2.6; stroke-linecap: round; }
+.broadcast-timer strong { display: block; font-size: clamp(25px, 2.65vw, 40px); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.broadcast-timer small { display: block; color: #94abc9; font-size: 8px; letter-spacing: 2px; font-weight: 800; margin-bottom: 5px; }
+.broadcast-board { position: absolute; left: 22px; top: 119px; width: 194px; border-radius: 20px; padding: 12px 13px 8px; }
+.broadcast-board-heading { color: #9cb2d0; font-size: 8px; font-weight: 800; letter-spacing: 1.5px; padding-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #30e0a3; box-shadow: 0 0 10px #30e0a355; flex-shrink: 0; }
+.broadcast-board ol { list-style: none; padding: 0; margin: 0; }
+.broadcast-board li { position: relative; display: flex; gap: 9px; align-items: center; min-height: 47px; padding: 5px 0 5px 10px; border-top: 1px solid #a1b3ce30; }
+.broadcast-board li:before { content: ''; position: absolute; left: 0; top: 13px; bottom: 13px; width: 3px; border-radius: 4px; background: var(--team-color); }
+.broadcast-board li>b { width: 13px; font-size: 17px; font-variant-numeric: tabular-nums; }
+.broadcast-board li>span:last-of-type { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 750; }
+.broadcast-board li small { display: block; color: #8fabc4; font-size: 7px; letter-spacing: 1px; margin-top: 3px; }
+.broadcast-board li em { font-size: 10px; color: var(--team-color); margin-left: auto; }
+.broadcast-board.large-field li { min-height: 34px; padding-top: 3px; padding-bottom: 3px; }
+.broadcast-board.large-field .racer-portrait { width: 25px; height: 25px; }
+.broadcast-board.large-field li small { display: none; }
+.racer-portrait { display: inline-flex; width: 33px; height: 33px; flex-shrink: 0; border-radius: 50%; overflow: hidden; border: 2px solid var(--team-color); background: #17243b; box-shadow: 0 0 0 2px #102038; }
+.racer-portrait img, .racer-portrait svg { width: 100%; height: 100%; object-fit: cover; }
+.broadcast-caption { position: absolute; bottom: 17px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 9px; max-width: 90%; border: 1px solid #d9edff30; border-radius: 30px; padding: 10px 18px; color: #e4effa; background: #101e34dd; font-size: 11px; font-weight: 600; text-align: center; box-shadow: 0 3px 12px #0002; }
+.runner-connectors { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 1; }
+.three-labels { z-index: 2; }
+.prototype-stadium .three-name { max-width: 190px; padding: 4px 12px 4px 4px; gap: 7px; border: 1.5px solid var(--team-color); border-radius: 24px; background: linear-gradient(135deg,#18334e,#141c31); box-shadow: 0 3px 8px #001b4540, inset 0 1px 0 #ffffff24; font-size: 13px; font-weight: 800; }
+.prototype-stadium .three-name b { display: grid; place-items: center; flex-shrink: 0; min-width: 23px; height: 26px; border-radius: 7px; background: var(--team-color); color: #fff; font-size: 18px; text-shadow: 0 1px 2px #0004; box-shadow: inset 0 1px 2px #fff7; }
+.prototype-stadium .three-name .racer-portrait { width: 34px; height: 34px; }
+.prototype-stadium .three-name.compact-name { padding-right: 7px; }
+.prototype-stadium .three-countdown { z-index: 6; backdrop-filter: blur(2px); }
+.prototype-stadium .three-fallback, .prototype-stadium .three-loading { z-index: 10; }
+.prototype-controls { background: linear-gradient(100deg,#14243a,#101d30); border-top: 1px solid #7899b32a; padding: 12px 20px; }
+.camera-options button[aria-pressed=true] { color: white; background: #2b5072; box-shadow: inset 0 1px 0 #92c8ee22; }
+.prototype-controls>label { color: #afc2d8; font-size: 11px; display: flex; gap: 6px; align-items: center; margin-left: auto; }
+.app-shell.race-active { max-width: 1800px; padding: 0 24px; }
+.race-active .header { height: 74px; border-bottom: 0; }
+.race-active .page-heading { display: none; }
+.race-active .three-viewport { height: clamp(570px, calc(100dvh - 160px), 940px); }
+.race-active .race-hud { margin-top: 16px; }
+@media(min-width:1500px) { .broadcast-board { width: 210px; }.broadcast-board li { min-height: 52px; font-size: 14px; } }
+@media(max-width:900px) { .broadcast-title { left: 14px; top: 14px; padding: 12px; border-radius: 18px; }.broadcast-title>svg { width: 30px; height: 30px; }.broadcast-title strong { font-size: 17px; }.broadcast-timer { top: 14px; right: 14px; padding: 13px; border-radius: 18px; }.broadcast-timer strong { font-size: 26px; }.broadcast-timer svg { width: 27px; height: 27px; }.broadcast-board { left: 14px; width: 180px; }.prototype-stadium .three-name { font-size: 11px; max-width: 150px; } }
+@media(max-width:700px) {
+  .app-shell.race-active { padding: 0 10px; }.race-active .header { height: 65px; }.race-active .brand small { display: none; }
+  .prototype-stadium { border-radius: 16px; }.prototype-stadium .three-viewport, .race-active .three-viewport { height: max(560px, calc(100dvh - 180px)); }
+  .broadcast-title { left: 10px; top: 10px; padding: 10px; gap: 7px; border-radius: 15px; }.broadcast-title>svg { width: 22px; height: 22px; }.broadcast-title strong { font-size: 12px; letter-spacing: -.3px; }.broadcast-title small { font-size: 7px; letter-spacing: .6px; }
+  .broadcast-timer { right: 10px; top: 10px; padding: 10px; border-radius: 15px; gap: 5px; }.broadcast-timer svg { width: 19px; height: 19px; }.broadcast-timer strong { font-size: 20px; }.broadcast-timer small { font-size: 6px; letter-spacing: 1px; }
+  .broadcast-board { top: auto; bottom: 45px; left: 10px; right: 10px; width: auto; padding: 5px 9px; border-radius: 12px; }.broadcast-board-heading { display: none; }.broadcast-board ol { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); column-gap: 8px; }.broadcast-board li, .broadcast-board.large-field li { min-height: 29px; gap: 4px; padding: 4px 0 4px 6px; }.broadcast-board li>b { font-size: 11px; width: 10px; }.broadcast-board li>span:last-of-type { font-size: 9px; }.broadcast-board li small, .broadcast-board .racer-portrait, .broadcast-board li em { display: none; }.broadcast-board li:before { top: 8px; bottom: 8px; width: 2px; }
+  .broadcast-caption { bottom: 9px; padding: 7px 10px; font-size: 9px; white-space: nowrap; max-width: 95%; }
+  .prototype-stadium .three-name { max-width: 104px; padding: 3px 6px 3px 3px; gap: 4px; border-radius: 16px; font-size: 9px; }.prototype-stadium .three-name .racer-portrait { width: 21px; height: 21px; }.prototype-stadium .three-name b { height: 20px; min-width: 17px; font-size: 12px; border-radius: 5px; }.prototype-stadium .three-name .label-name { display: inline; }.prototype-stadium .three-name.compact-name .label-name { display: none; }
+  .prototype-controls { padding: 9px; gap: 6px; }.prototype-controls>label { margin-left: 0; font-size: 10px; }.camera-options button { padding: 9px; font-size: 10px; }
+}
+
+@media(min-width:901px) {
+  .broadcast-title { padding: 16px 26px 16px 18px; }.broadcast-title strong { font-size: clamp(23px, 1.9vw, 30px); }
+  .broadcast-board { width: 226px; }.broadcast-board li { min-height: 52px; gap: 11px; }.broadcast-board li>span:last-of-type { font-size: 14px; }.broadcast-board li>b { font-size: 21px; width: 15px; }.broadcast-board .racer-portrait { width: 36px; height: 36px; }
+  .prototype-stadium .three-name { max-width: 228px; font-size: 16px; padding: 5px 14px 5px 5px; gap: 8px; }.prototype-stadium .three-name .racer-portrait { width: 40px; height: 40px; }.prototype-stadium .three-name b { min-width: 28px; height: 31px; font-size: 21px; }
+  .prototype-stadium .three-name.compact-name { padding: 4px 8px 4px 4px; }.prototype-stadium .three-name.compact-name .racer-portrait { width: 29px; height: 29px; }.prototype-stadium .three-name.compact-name b { min-width: 22px; height: 26px; font-size: 17px; }
+}
