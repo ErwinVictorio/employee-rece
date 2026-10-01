@@ -1158,3 +1158,9 @@ footer b {
 .settings select { background: #243a56; color: #edf4ff; border: 1px solid #56708d; border-radius: 6px; padding: 7px; }
 .prototype-controls>button, .three-fallback button, .three-loading button { background: #243a56; color: #edf4ff; border: 1px solid #56708d; border-radius: 7px; padding: 9px 15px; cursor: pointer; }
 :fullscreen .page-heading, :fullscreen footer { display: none; } :fullscreen .header { position: sticky; top: 0; z-index: 10; background: #0b1426; }
+
+.winner-exclusion { margin-bottom: 20px; padding: 18px 24px; }
+.winner-exclusion p { font-size: 13px; overflow-wrap: anywhere; }
+.excluded-badge { display: block; color: #e9c46f; font-size: 10px; margin-top: 3px; }
+
+.custom-duration input { width: 100%; padding: 12px; border: 1px solid #43516b; border-radius: 10px; background: #101e34; color: #fff; font: inherit; }

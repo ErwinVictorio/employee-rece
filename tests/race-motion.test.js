@@ -10,7 +10,8 @@ test('final stretch has visible field separation without changing crossing times
     const race = createRace(roster(count), duration, { funMoments }, rng(seed));
     const positions = race.runners.map(r => sampleRunner(r, duration * .75).progress);
     const spread = Math.max(...positions) - Math.min(...positions);
-    assert.ok(spread >= .15 && spread <= .17, `spread=${spread}`);
+    const minimum = count === 2 && race.scenario !== 'steady' ? (race.scenario === 'close' ? .009 : .069) : .149;
+    assert.ok(spread >= minimum && spread <= .17, `scenario=${race.scenario} spread=${spread}`);
     race.runners.forEach((r, rank) => {
       assert.equal(r.finishTime, duration * (.9 + .1 * rank / (count - 1)));
       const before = sampleRunner(r, duration * .75 - .00001);

@@ -10,6 +10,7 @@ export function Avatar({
 }
 export function ParticipantsPanel({
   employees,
+  excludedIds = [],
   onChange
 }) {
   const [editing, setEditing] = useState(null);
@@ -91,7 +92,7 @@ export function ParticipantsPanel({
     };
     reader.readAsDataURL(file);
   }
-  return <section className="panel participants"><div className="section-heading"><h2><span className="step">01</span> Meet the racers</h2><span className="count-badge">{employees.length} / 12</span></div><div className="employee-list">{employees.map((employee, i) => <div className="employee-row" key={employee.id}><span className="lane-index">{String(i + 1).padStart(2, '0')}</span><Avatar employee={employee} /><span className="employee-name">{employee.name}</span><button className="icon-button" aria-label={`Edit ${employee.name}`} onClick={() => {
+  return <section className="panel participants"><div className="section-heading"><h2><span className="step">01</span> Meet the racers</h2><span className="count-badge">{employees.length} / 12</span></div><div className="employee-list">{employees.map((employee, i) => <div className="employee-row" key={employee.id}><span className="lane-index">{String(i + 1).padStart(2, '0')}</span><Avatar employee={employee} /><span className="employee-name">{employee.name}{excludedIds.includes(employee.id) && <small className="excluded-badge">Already won · excluded</small>}</span><button className="icon-button" aria-label={`Edit ${employee.name}`} onClick={() => {
           clear();
           setEditing(employee.id);
           setName(employee.name);

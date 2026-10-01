@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRace } from '../utils/race';
-export function useRace() {
+export function useRace(onWinner) {
   const [race, setRace] = useState(null);
   const [clock, setClock] = useState(0);
   const started = useRef(0);
@@ -45,6 +45,13 @@ export function useRace() {
   }, [race, paused]);
   const elapsed = Math.max(0, clock - 4);
   const state = !race ? 'setup' : clock < 4 ? 'countdown' : elapsed >= race.duration + 0.8 ? 'results' : elapsed >= race.runners[0].finishTime ? 'finished' : elapsed >= race.duration * 0.75 ? 'finalStretch' : 'racing';
+  const recordedRace = useRef(null);
+  useEffect(() => {
+    if ((state === 'finished' || state === 'results') && recordedRace.current !== race.id) {
+      recordedRace.current = race.id;
+      onWinner?.(race.order[0]);
+    }
+  }, [state, race, onWinner]);
   return {
     race,
     animationTime,

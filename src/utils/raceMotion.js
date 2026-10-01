@@ -109,3 +109,11 @@ export function validateRacePlan(race) {
   }
   return violations;
 }
+
+// Announce actual recent overtakes, never the preselected winner/scenario.
+export function comebackRunner(race, elapsed) {
+  if (!race || elapsed < race.duration * .6 || elapsed >= race.runners[0].finishTime) return null;
+  const standings = time => [...race.runners].sort((a, b) => sampleRunner(b, time).progress - sampleRunner(a, time).progress || a.rank - b.rank);
+  const earlier = standings(elapsed - race.duration * .06);
+  return standings(elapsed).find((runner, index) => !sampleRunner(runner, elapsed).event && earlier.findIndex(r => r.employee.id === runner.employee.id) > index) || null;
+}

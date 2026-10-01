@@ -14,7 +14,7 @@ export default function WinnerSpotlightOverlay({ race, onAgain, onViewResults })
       <h2 ref={heading} tabIndex={-1}>{winner.employee.name}</h2>
       <div className="spotlight-time"><strong>{winner.finishTime.toFixed(2)}<small>s</small></strong><span>FINISH TIME</span></div>
       <p className="spotlight-note">A winning moment. A team worth celebrating.</p>
-      <div className="spotlight-actions"><button className="primary" onClick={onAgain}>↻ Race Again</button><button className="secondary" onClick={onViewResults}>View Results</button></div>
+      <div className="spotlight-actions"><button className="primary" disabled={!onAgain} onClick={onAgain}>↻ Race Again</button><button className="secondary" onClick={onViewResults}>View Results</button></div>
       <small className="spotlight-disclaimer">Simulated game time · Randomized race order</small>
     </section>
   </div>;
