@@ -1,4 +1,4 @@
-﻿import { Component, createRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { Component, createRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { characters } from '../../data/assets';
 import { progressAt } from '../../utils/race';
@@ -51,7 +51,7 @@ export default function RaceScene3D({ employees, game, onFallback, onBlocked, on
   return <section className="prototype-stadium" aria-label="3D stadium">
     <div className="three-viewport" data-ready={ready && !failed} data-fps={fps}>
       {!failed && <SceneBoundary key={attempt} onError={onLost}><Canvas frameloop={game.race && !game.paused && (!celebrating || (!reduced && !celebrationPaused)) ? 'always' : 'demand'} shadows={!low} dpr={low ? 1 : [1, 1.5]} camera={{ fov: 45, near: 0.1, far: 300 }} gl={{ antialias: !low }} fallback={<div className="three-fallback">3D unavailable. <button onClick={onFallback}>Continue in 2D</button></div>}>
-        {celebrating ? <WinnerSpotlight3D key={game.race.id} order={game.race.order} paused={celebrationPaused} reducedMotion={reduced} /> : <><Stadium3D laneCount={employees.length} />
+        {celebrating ? <WinnerSpotlight3D key={game.race.id} order={game.race.order} paused={celebrationPaused} reducedMotion={reduced} low={low} /> : <><Stadium3D laneCount={employees.length} game={game} reducedMotion={reduced} low={low} />
         <RaceCamera game={game} laneCount={employees.length} view={view} finishCam={finishCam} reducedMotion={reduced} />
 
         <RunnerResources>{employees.map((employee, lane) => <Runner3D key={employee.id} employee={employee} lane={lane} laneCount={employees.length} color={characters[employee.character].color} race={game.race} elapsed={game.elapsed} animationTime={game.animationTime} labelRef={labels[lane]} reducedMotion={reduced} />)}</RunnerResources>

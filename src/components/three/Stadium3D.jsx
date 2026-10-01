@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Color, Object3D } from 'three';
 import StadiumDetails from './StadiumDetails';
+import Crowd3D from './Crowd3D';
 
 function Block({ position, size, color, ...props }) {
   return <mesh position={position} {...props}><boxGeometry args={size} /><meshStandardMaterial color={color} roughness={0.9} /></mesh>;
@@ -48,7 +49,7 @@ export function SceneLifecycle({ onReady, onLost, onPerformance }) {
   return null;
 }
 
-export default function Stadium3D({ laneCount = 2 }) {
+export default function Stadium3D({ laneCount = 2, game, reducedMotion, low }) {
   return <>
     <color attach="background" args={['#80b5a0']} />
     <fog attach="fog" args={['#b8d9c6', 110, 250]} />
@@ -60,6 +61,7 @@ export default function Stadium3D({ laneCount = 2 }) {
     <Block position={[-10, 0.04, 0]} size={[0.12, 0.02, laneCount * 3.2]} color="#fff4df" />
     <StadiumInstances laneCount={laneCount} />
     <StadiumDetails laneCount={laneCount} />
+    <Crowd3D laneCount={laneCount} active={!!game?.race} excited={game?.elapsed >= game?.race?.duration * .75} paused={game?.paused} reducedMotion={reducedMotion} low={low} />
     {[-1, 1].map(side => <group key={side}>
       {[0, 1, 2].map(tier => <group key={tier}>
         <Block position={[0, 0.35 + tier * 0.65, side * (laneCount * 1.6 + 3 + tier * 1.2)]} size={[33, 0.7 + tier * 0.5, 1.2]} color={tier % 2 ? '#476684' : '#294563'} receiveShadow />

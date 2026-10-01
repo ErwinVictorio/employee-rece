@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { AdditiveBlending, CanvasTexture, Color, Object3D, SRGBColorSpace, Vector2 } from 'three';
 import { characters } from '../../data/assets';
 import Runner3D, { RunnerResources } from './Runner3D';
+import Crowd3D from './Crowd3D';
 
 function Trophy() {
   const profile = useMemo(() => [[.15, 0], [.2, .15], [.42, .28], [.58, .6], [.62, .85]].map(p => new Vector2(...p)), []);
@@ -83,7 +84,7 @@ function Stage() {
   </>;
 }
 
-export default function WinnerSpotlight3D({ order, paused, reducedMotion }) {
+export default function WinnerSpotlight3D({ order, paused, reducedMotion, low }) {
   const winner = order[0];
   const { size } = useThree();
   const turntable = useRef();
@@ -113,6 +114,7 @@ export default function WinnerSpotlight3D({ order, paused, reducedMotion }) {
     <spotLight position={[0, 8, 2]} target={spotlightTarget} angle={.48} penumbra={.65} intensity={210} distance={22} color="#ffedb8" castShadow shadow-mapSize={[1024, 1024]} shadow-normalBias={.04} />
     <pointLight position={[-5, 3, -3]} color="#388dff" intensity={28} /><pointLight position={[3, 4, -2]} color="#f8be54" intensity={24} />
     <Stage />
+    <Crowd3D celebration active paused={paused} reducedMotion={reducedMotion} low={low} />
     <RunnerResources>{order.slice(0, 5).map((employee, index) => {
       const height = [1.12, .7, .6, .4, .35][index];
       return <group key={employee.id} position={[[0, -2.7, 2.7, -4.8, 4.8][index], 0, index === 0 ? .3 : 0]}>

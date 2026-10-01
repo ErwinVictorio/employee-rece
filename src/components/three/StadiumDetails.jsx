@@ -22,17 +22,7 @@ function Instances({ items, round = false }) {
 export default function StadiumDetails({ laneCount }) {
   const { spheres, boxes } = useMemo(() => {
     const spheres = [], boxes = [];
-    const shirts = ['#228af4', '#f9bd3a', '#f25e69', '#e7effb', '#2dc5ad', '#8861e9'];
-    const skins = ['#f2b68a', '#c98a62', '#8f573f'];
     for (const side of [-1, 1]) {
-      for (let tier = 0; tier < 3; tier++) for (let seat = 0; seat < 22; seat++) {
-        const x = -15 + seat * 1.4, y = 1.18 + tier * .9, z = side * (laneCount * 1.6 + 3 + tier * 1.2);
-        spheres.push({ position: [x, y + .75, z], scale: [.23, .27, .23], color: skins[(seat + tier) % 3] });
-        spheres.push({ position: [x, y + .94, z - .035], scale: [.235, .13, .23], color: seat % 4 ? '#392b24' : '#b98a51' });
-        spheres.push({ position: [x, y + .27, z], scale: [.31, .40, .23], color: shirts[(seat + tier * 2) % 6] });
-        spheres.push({ position: [x - .35, y + .27, z], scale: [.09, .25, .1], color: skins[(seat + tier) % 3] });
-        spheres.push({ position: [x + .35, y + .27, z], scale: [.09, .25, .1], color: skins[(seat + tier) % 3] });
-      }
       const edge = side * (laneCount * 1.6 + 1.25);
       boxes.push({ position: [0, .12, edge], scale: [31, .16, 1.4], color: '#88ad7d' });
       boxes.push({ position: [0, .38, side * (laneCount * 1.6 + 2.1)], scale: [33, .12, .12], color: '#e7f0f1' });
