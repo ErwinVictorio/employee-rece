@@ -2,6 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRace } from '../utils/race';
 export function useRace(onWinner) {
   const [race, setRace] = useState(null);
+  const preparation = useRef(null);
+  const generation = useRef(0);
+  const [preparing, setPreparing] = useState(false);
+  useEffect(() => () => { preparation.current?.cancel(); }, []);
   const [clock, setClock] = useState(0);
   const started = useRef(0);
   const animationTime = useRef(0);
@@ -44,7 +48,7 @@ export function useRace(onWinner) {
     return () => cancelAnimationFrame(frame);
   }, [race, paused]);
   const elapsed = Math.max(0, clock - 4);
-  const state = !race ? 'setup' : clock < 4 ? 'countdown' : elapsed >= race.duration + 0.8 ? 'results' : elapsed >= race.runners[0].finishTime ? 'finished' : elapsed >= race.duration * 0.75 ? 'finalStretch' : 'racing';
+  const state = !race ? 'setup' : clock < 4 ? 'countdown' : elapsed >= race.duration + 0.8 ? 'results' : elapsed >= race.runners[0].finishTime ? 'finished' : elapsed >= race.finalStretchAt ? 'finalStretch' : 'racing';
   const recordedRace = useRef(null);
   useEffect(() => {
     if ((state === 'finished' || state === 'results') && recordedRace.current !== race.id) {
@@ -59,9 +63,32 @@ export function useRace(onWinner) {
     paused, pause, resume,
     elapsed,
     state,
+    preparing,
     countdown: clock < 3 ? 3 - Math.floor(clock) : 'GO!',
-    start(employees, duration, settings, random) {
-      const next = createRace(employees, duration, settings, random);
+    async start(employees, duration, settings, random) {
+      const version = ++generation.current;
+      preparation.current?.cancel();
+      setPreparing(true);
+      let next;
+      try {
+        next = employees.length <= 12 || random ? createRace(employees, duration, settings, random) : await new Promise((resolve, reject) => {
+          const worker = new Worker(new URL('../utils/raceWorker.js', import.meta.url), { type: 'module' });
+          const finish = () => { worker.terminate(); preparation.current = null; };
+          preparation.current = { cancel: () => { finish(); resolve(null); } };
+          worker.onmessage = ({ data }) => { finish(); if (data.error) reject(new Error(data.error)); else resolve(data.race); };
+          worker.onerror = () => { finish(); reject(new Error('Race preparation failed. Please try again.')); };
+          worker.postMessage({ employees, duration, settings });
+        });
+      } finally { if (version === generation.current) setPreparing(false); }
+      if (!next || version !== generation.current) return;
+      // Structured cloning from the worker does not preserve Object.freeze.
+      next.order.forEach(Object.freeze);
+      next.runners.forEach(runner => {
+        runner.events.forEach(Object.freeze); Object.freeze(runner.events);
+        Object.freeze(runner.motionPlan.points); Object.freeze(runner.motionPlan.velocities);
+        Object.freeze(runner.motionPlan); Object.freeze(runner.employee); Object.freeze(runner);
+      });
+      Object.freeze(next.order); Object.freeze(next.runners); Object.freeze(next.settings); Object.freeze(next);
       pausedAt.current = null;
       setPaused(false);
       started.current = performance.now();
@@ -71,6 +98,9 @@ export function useRace(onWinner) {
       setRace(next);
     },
     reset() {
+      generation.current++;
+      preparation.current?.cancel();
+      setPreparing(false);
       pausedAt.current = null;
       setPaused(false);
       setRace(null);

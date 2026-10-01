@@ -1,6 +1,6 @@
 # Employee Race
 
-A React/Vite stadium race for 2–12 employees, using the supplied character and sound assets.
+A React/Vite stadium race for 2–100 employees, using the supplied character and sound assets.
 
 ## Run
 
@@ -27,7 +27,7 @@ The finish screen includes a podium, View Results, Race Again, Edit Participants
 
 ## Main 3D stadium
 
-Supported WebGL2 browsers use the full 2–12-runner 3D stadium by default. Choose **2D / low power** in setup or **Use 2D** during a race. Both views share the same race, elapsed time, events, and finish order. Low quality is the default; stadium and elevated trackside cameras fit the whole field.
+Supported WebGL2 browsers use the 3D stadium by default. Fields above twelve use a selectable twelve-lane broadcast window; all employees still race. Choose **2D / low power** in setup or **Use 2D** during a race. Both views share the same race, elapsed time, events, and finish order. Low quality is the default; stadium and elevated trackside cameras fit the whole field.
 
 **Fun moments** defaults to ON. Randomly selected runners slow down, tumble, get up, and recover; any runner, including the winner, can fall. Turning this off preserves normal racing. Falls never reroll the result. Full names and lane numbers remain in standings when crowded in-scene labels become compact.
 
@@ -38,7 +38,7 @@ The reference-inspired presentation adds a broadcast timer, live overlay standin
 See [3D implementation and verification](Docs/3D_IMPLEMENTATION_NOTES.md), including performance limitations.
 ## Race guarantees
 
-`src/utils/race.js` copies participants, applies Fisher–Yates once, and freezes the race snapshot. Animation cannot alter the result. A precomputed positive speed envelope includes real event slowdowns; after 75% of the duration, monotone Hermite paths converge toward ordered finish times. The winner finishes at 90% of the duration, and the last racer finishes at 100%. Result times are simulated crossing times, not employee performance measurements. A fresh shuffle can legitimately repeat a previous order.
+`src/utils/race.js` copies participants, applies Fisher–Yates once, and freezes the race snapshot. Animation cannot alter the result. A precomputed positive speed envelope includes real event slowdowns; after 75% of the duration, monotone Hermite paths converge toward ordered finish times. For up to twelve entrants, the winner finishes at 90% of the duration. Larger fields finish from 80% to 100%, extending short selections when necessary for at least 0.12 seconds between crossings. The last racer finishes at 100%. Result times are simulated crossing times, not employee performance measurements. A fresh shuffle can legitimately repeat a previous order.
 
 Timing uses elapsed animation-frame timestamps and excludes paused time. Backgrounding the tab pauses the logical clock. All racers appear once in the complete ranking. Late browser frames can display several finishes together, but assigned finish times and rankings stay ordered.
 
@@ -51,3 +51,5 @@ Browser scripts use a dedicated local Chromium DevTools port **9334** and Vite o
 Physical-device frame rate and speaker output still require device testing. Accounts, persistent history, custom rigged models, and multiplayer remain outside this release.
 
 After every runner finishes, the 3D Winner Spotlight presents the winning character on a podium with a trophy, spotlight, confetti and a 12-second rotation. View Results opens the standings; Race Again starts a fresh race. Motion can be paused and respects reduced-motion preferences. See [Winner Spotlight notes](Docs/WINNER_SPOTLIGHT.md); browser coverage is in tests/browser-winner-spotlight.mjs.
+
+Bulk entry supports one name per line or a single Excel column: Enter adds all, Shift+Enter inserts a newline. All eligible employees participate; focused rendering never selects a subset of entrants. See [100-employee implementation](Docs/100_EMPLOYEES.md).

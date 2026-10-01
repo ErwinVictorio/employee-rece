@@ -63,3 +63,5 @@
   .prototype-stadium .three-name { max-width: 228px; font-size: 16px; padding: 5px 14px 5px 5px; gap: 8px; }.prototype-stadium .three-name .racer-portrait { width: 40px; height: 40px; }.prototype-stadium .three-name b { min-width: 28px; height: 31px; font-size: 21px; }
   .prototype-stadium .three-name.compact-name { padding: 4px 8px 4px 4px; }.prototype-stadium .three-name.compact-name .racer-portrait { width: 29px; height: 29px; }.prototype-stadium .three-name.compact-name b { min-width: 22px; height: 26px; font-size: 17px; }
 }
+.broadcast-board.large-field { max-height: 330px; pointer-events: auto; overflow-y: auto; }
+@media(max-width:700px) { .broadcast-board.large-field { max-height: 125px; }.broadcast-board.large-field ol { display: block; } }

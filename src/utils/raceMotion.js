@@ -1,11 +1,11 @@
 const smooth = t => t * t * (3 - 2 * t);
 
-export function planFunEvents(ids, duration, random) {
+export function planFunEvents(ids, duration, random, cutoff = .7) {
   const available = [...ids];
   const events = new Map(ids.map(id => [id, []]));
   const target = ids.length <= 4 ? 1 : ids.length <= 8 ? 2 : 3;
   let at = duration * 0.15 + random() * 0.15;
-  for (let i = 0; i < target && at + 2.35 <= duration * 0.7; i++) {
+  for (let i = 0; i < target && at + 2.35 <= duration * cutoff; i++) {
     const id = available.splice(Math.floor(random() * available.length), 1)[0];
     events.get(id).push(Object.freeze({ id: `${id}-fall`, stumbleAt: at, fallAt: at + 0.25,
       groundAt: at + 0.5, getUpAt: at + 0.85, comebackAt: at + 1.3, endAt: at + 2.35 }));
@@ -25,11 +25,12 @@ export function poseAt(events, elapsed) {
 
 // Integrate a smooth positive velocity envelope. Final Hermite segment preserves
 // entry velocity and arrives at the assigned crossing with zero terminal velocity.
-export function buildMotionPlan(events, duration, finishTime, random) {
-  const split = duration * 0.75;
+export function buildMotionPlan(events, duration, finishTime, random, rankFraction = Math.max(0, Math.min(1, (finishTime / duration - .9) / .1)), splitFraction = .75) {
+  const split = duration * splitFraction;
   const phases = [random() * 6.28, random() * 6.28];
   const pace = 0.94 + random() * 0.08;
-  const dt = split / Math.ceil(split * 120);
+  const steps = Math.min(12000, Math.ceil(split * 120));
+  const dt = split / steps;
   const points = [0];
   const velocities = [];
   const speedAt = time => {
@@ -46,14 +47,13 @@ export function buildMotionPlan(events, duration, finishTime, random) {
     }
     return speed;
   };
-  for (let i = 0; i <= Math.ceil(split * 120); i++) {
+  for (let i = 0; i <= steps; i++) {
     velocities.push(speedAt(i * dt));
     if (i) points.push(points[i - 1] + (velocities[i - 1] + velocities[i]) * dt / 2);
   }
   // Coordinated targets spread the field instead of forcing everyone into a
   // half-unit pack. Keep the random draw stable for existing seeded races.
   const draw = random();
-  const rankFraction = Math.max(0, Math.min(1, (finishTime / duration - .9) / .1));
   const base = .80 + draw * .025;
   const scale = base / points.at(-1);
   const offset = .84 - .16 * rankFraction + draw * .008 - base;

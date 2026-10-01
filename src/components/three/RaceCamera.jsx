@@ -37,7 +37,7 @@ export default function RaceCamera({ game, laneCount, view, finishCam, reducedMo
   // Sampling race time makes the transition pause/resume-safe and independent
   // of frame rate. A restored context immediately recovers the saved view.
   useFrame(({ camera, gl }) => {
-    const blend = finishCam ? finishCameraBlend(game.animationTime.current, game.race?.duration, reducedMotion) : 0;
+    const blend = finishCam ? finishCameraBlend(game.animationTime.current, game.race?.duration, reducedMotion, game.race?.finalStretchAt) : 0;
     const positions = game.race ? game.race.runners.map(r => -10 + 20 * progressAt(r, game.animationTime.current)) : [];
     const follow = followCameraBlend(game.animationTime.current, reducedMotion);
     const offset = fieldCenter(positions) * follow;

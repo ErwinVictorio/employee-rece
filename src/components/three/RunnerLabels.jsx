@@ -3,13 +3,18 @@ import { useFrame } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { sampleRunner } from '../../utils/raceMotion';
 
-export default function RunnerLabels({ employees, labels, connectors, game }) {
+export default function RunnerLabels({ employees, labels, connectors, game, labeled }) {
   const point = useMemo(() => new Vector3(), []);
   useFrame(({ camera, size }) => {
-    const placed = size.width > 700 ? [{ left: 12, right: 274, top: 100, bottom: Math.min(size.height - 65, 160 + employees.length * (employees.length > 8 ? 34 : 56)) }] : [{ left: 0, right: size.width, top: size.height - 65 - Math.ceil(employees.length / 3) * 29, bottom: size.height }];
+    const large = (game.race?.runners.length || employees.length) > 12;
+    const placed = size.width > 700 ? [{ left: 12, right: 274, top: 100, bottom: large ? 440 : Math.min(size.height - 65, 160 + employees.length * (employees.length > 8 ? 34 : 56)) }] : [{ left: 0, right: size.width, top: size.height - 65 - (large ? 125 : Math.ceil(employees.length / 3) * 29), bottom: size.height }];
     employees.forEach((employee, lane) => {
       const element = labels[lane].current;
       if (!element) return;
+      const visible = !labeled || labeled.has(employee.id);
+      element.style.display = visible ? '' : 'none';
+      if (connectors[lane].current) connectors[lane].current.style.display = visible ? '' : 'none';
+      if (!visible) return;
       const runner = game.race?.runners.find(r => r.employee.id === employee.id);
       const progress = runner ? sampleRunner(runner, game.animationTime.current).progress : 0;
       point.set(-10 + progress * 20, 3.35, (lane - (employees.length - 1) / 2) * 3.2).project(camera);

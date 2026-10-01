@@ -59,7 +59,7 @@ test('speed variation produces overtakes before the final stretch', () => {
 })
 
 test('invalid rosters and durations are rejected', () => {
-  for (const count of [0, 1, 13]) assert.throws(() => createRace(employees(count), 15))
+  for (const count of [0, 1, 101]) assert.throws(() => createRace(employees(count), 15))
   assert.throws(() => createRace([{ id: 1, name: ' ' }, { id: 2, name: 'A' }], 15))
   assert.throws(() => createRace([{ id: 1, name: 'A' }, { id: 1, name: 'B' }], 15))
   assert.throws(() => createRace(employees(2), 12))

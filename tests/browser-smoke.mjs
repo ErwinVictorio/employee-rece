@@ -63,7 +63,7 @@ try {
   assert.ok(await evaluate(`document.documentElement.scrollWidth <= window.innerWidth`))
   for (let i = 6; i < 12; i++) { await name(`Employee ${i}`); await click('+ Add') }
   assert.equal(await evaluate(`document.querySelectorAll('.employee-row').length`), 12)
-  assert.ok(await evaluate(`Array.from(document.querySelectorAll('button')).find(b => b.textContent === '+ Add').disabled`))
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('button')).find(b => b.textContent === '+ Add').disabled`), false)
   await click('Start Race →'); await until(`!!document.querySelector('.results-panel')`)
   await click('New Game'); await click('Cancel'); assert.ok(await evaluate(`!!document.querySelector('.results-panel')`))
   await click('New Game'); await evaluate(`document.querySelector('dialog .primary').click()`); await until(`!!document.querySelector('#employee-name')`)
