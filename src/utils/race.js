@@ -1,5 +1,6 @@
 import { buildMotionPlan, planFunEvents, sampleRunner, validateRacePlan } from './raceMotion.js';
 import { applyScenario } from './raceScenarios.js';
+import { normalizeLocation } from '../data/locations.js';
 import { raceTiming } from './roster.js';
 export function shuffleArray(items, random = Math.random) {
   const result = [...items];
@@ -41,7 +42,7 @@ export function createRace(employees, duration, settings = {}, random = Math.ran
   }
   return Object.freeze({
     id: globalThis.crypto?.randomUUID?.() || String(Date.now()),
-    settings: Object.freeze({ funMoments }),
+    settings: Object.freeze({ funMoments, location: normalizeLocation(settings.location) }),
     duration,
     requestedDuration,
     finalStretchAt: duration * timing.splitFraction,

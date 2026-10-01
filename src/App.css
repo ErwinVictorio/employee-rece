@@ -1174,3 +1174,18 @@ footer b {
 .focus-controls { display: flex; flex-wrap: wrap; gap: 12px; padding: 12px; font-size: 12px; background: #15233b; }
 .focus-controls select { max-width: 100%; color: white; background: #21334d; padding: 8px; }
 .large-race-note { padding: 16px; font-size: 13px; }
+.location-settings { border: 0; padding: 0; margin: 18px 0; min-width: 0; }
+.location-settings legend { font-size: 13px; font-weight: 700; margin-bottom: 9px; }
+.location-settings>div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.location-settings button { text-align: left; border: 1px solid #526078; background: #17273e; color: #fff; border-radius: 10px; padding: 12px; min-width: 0; }
+.location-settings button[aria-pressed="true"] { border-color: #f4c15c; background: #393326; }
+.location-settings small, .location-settings span { display: block; margin-top: 6px; font-size: 11px; }
+.location-settings small { color: #b6c3d4; line-height: 1.4; }
+.location-settings span { color: #ffd16a; }
+.company-banner { position: relative; background: #769ca4; overflow: hidden; min-height: 160px; }
+.company-banner svg { display: block; width: 100%; height: 200px; }
+.company-banner>div { position: absolute; bottom: 10px; left: 12px; right: 12px; padding: 10px 14px; background: #122239e8; border-radius: 8px; }
+.company-banner strong, .company-banner small { display: block; }
+.company-banner small { font-size: 11px; color: #c6d3e2; margin-top: 5px; }
+[data-location="company-grounds"].prototype-stadium { border-color: #d9b95c; }
+[data-location="company-grounds"] .broadcast-title>svg { color: #ffcf63; }

@@ -35,8 +35,14 @@ export function SceneLifecycle({ onReady, onLost, onPerformance }) {
     const canvas = gl.domElement;
     const lost = event => { event.preventDefault(); onLost(); };
     canvas.addEventListener('webglcontextlost', lost);
+    const statistics = setInterval(() => {
+      canvas.dataset.drawCalls = String(gl.info.render.calls);
+      canvas.dataset.triangles = String(gl.info.render.triangles);
+      canvas.dataset.geometries = String(gl.info.memory.geometries);
+      canvas.dataset.textures = String(gl.info.memory.textures);
+    }, 250);
     onReady();
-    return () => canvas.removeEventListener('webglcontextlost', lost);
+    return () => { clearInterval(statistics); canvas.removeEventListener('webglcontextlost', lost); };
   }, [gl, onReady, onLost]);
   useFrame((_, delta) => {
     sample.current.elapsed += delta;

@@ -19,6 +19,10 @@ npm run build
 
 ## Play
 
+Choose **Stadium** (the default) or **Company Grounds** in Race location. Company Grounds adds a concrete courtyard, a procedural company building and an entrance backdrop for the winner podium. Location changes update the preview without generating a result. Replay, Edit Participants, Reset and New Game retain the location; reload restores Stadium.
+
+Both venues use the same race simulation and support all 100 participants. Company Grounds keeps its environment footprint fixed when focused lane groups change. Its 2D mode uses a simplified building banner with the existing full lane list. See [Company Grounds implementation and verification](Docs/COMPANY_GROUNDS_IMPLEMENTATION_NOTES.md) for screenshots, measured rendering costs and limitations.
+
 The initial six names are editable samples. Add, edit, or remove racers; choose a red, blue, yellow, pink, purple, or green character; optionally upload a JPG, PNG, or WebP photo (up to 5 MB). Photos are resized locally and never uploaded. Names, photos, and settings last for the current tab session only; reloading restores samples.
 
 Choose 10, 15, 20, or 30 seconds, then Start Race. A four-second 3–2–1–GO countdown precedes the selected race duration. Effects and stadium ambience have separate setup switches; the header sound control toggles both. Crowd ambience is supplied instead of music because no music asset was provided.

@@ -5,11 +5,12 @@ import { Color, DynamicDrawUsage, Object3D } from 'three';
 const shirts = ['#228af4', '#f9bd3a', '#f25e69', '#e7effb', '#2dc5ad', '#8861e9'];
 const skins = ['#f2b68a', '#c98a62', '#8f573f'];
 
-export default function Crowd3D({ laneCount = 2, celebration = false, active = false, excited = false, paused = false, reducedMotion = false, low = true }) {
+export default function Crowd3D({ placements, laneCount = 2, celebration = false, active = false, excited = false, paused = false, reducedMotion = false, low = true }) {
   const mesh = useRef();
   const clock = useRef({ time: 0, interval: 0, energy: 0, staticPose: true });
   const object = useMemo(() => new Object3D(), []);
   const people = useMemo(() => {
+    if (placements) return placements.map((p, i) => ({ ...p, phase: (i * 2.399) % (Math.PI * 2), speed: 1.6 + ((i * 37) % 17) / 12, kind: i % 3 }));
     const list = [];
     for (const side of celebration ? [1] : [-1, 1]) for (let tier = 0; tier < (celebration ? 2 : 3); tier++) for (let seat = 0; seat < (celebration ? 18 : 22); seat++) {
       const index = list.length;
@@ -20,7 +21,7 @@ export default function Crowd3D({ laneCount = 2, celebration = false, active = f
         speed: 1.6 + ((index * 37) % 17) / 12, kind: index % 3 });
     }
     return list;
-  }, [laneCount, celebration]);
+  }, [laneCount, celebration, placements]);
   const paint = useMemo(() => (time, energy) => {
     people.forEach((p, i) => {
       const phase = time * p.speed + p.phase;
