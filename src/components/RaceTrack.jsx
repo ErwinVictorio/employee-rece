@@ -1,4 +1,5 @@
 import CompanyGroundsBanner from './CompanyGroundsBanner';
+import CompanyImageBanner from './CompanyImageBanner';
 import { locations, normalizeLocation } from '../data/locations';
 import { sampleRunner } from '../utils/raceMotion';
 import { characters } from '../data/assets';
@@ -33,7 +34,7 @@ export function RaceTrack({
     finished: `${race?.order[0].name} takes the win!`,
     results: 'What a race!'
   };
-  return <section className="track-card" aria-label={`${title} race track`} data-location={venue}><div className="track-toolbar"><div><span className={`status-dot ${live ? 'live' : ''}`} /><strong>{state === 'setup' ? 'TRACK PREVIEW' : `${title.toUpperCase()} LIVE`}</strong><span className="track-subtitle">{employees.length} racers · {title}</span></div><span className="timer">◷ {String(Math.ceil(Math.max(0, (race?.duration || duration) - elapsed))).padStart(2, '0')}<small> SEC</small></span></div>{venue === 'company-grounds' ? <CompanyGroundsBanner /> : <div className="stadium-banner" style={{
+  return <section className="track-card" aria-label={`${title} race track`} data-location={venue}><div className="track-toolbar"><div><span className={`status-dot ${live ? 'live' : ''}`} /><strong>{state === 'setup' ? 'TRACK PREVIEW' : `${title.toUpperCase()} LIVE`}</strong><span className="track-subtitle">{employees.length} racers · {title}</span></div><span className="timer">◷ {String(Math.ceil(Math.max(0, (race?.duration || duration) - elapsed))).padStart(2, '0')}<small> SEC</small></span></div>{venue === 'company-image' ? <CompanyImageBanner /> : venue === 'company-grounds' ? <CompanyGroundsBanner /> : <div className="stadium-banner" style={{
       backgroundImage: `linear-gradient(0deg, #111e39dd, #111e3910), url(${stadium})`
     }}><div><span className="eyebrow">EMPLOYEE RACE / STADIUM SERIES</span><h2 aria-live="polite">{labels[state]}</h2></div><img className="finish-gate" src={finish} alt="Finish" /></div>}
     <div className="track-lanes"><div className="track-labels"><span>START</span><span>FINISH</span></div>{employees.map((employee, i) => {

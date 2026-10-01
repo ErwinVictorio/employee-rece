@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import { connect } from './company-browser-helpers.mjs';
+const b = await connect();
+try {
+  await b.send('Network.enable'); await b.send('Network.setCacheDisabled', { cacheDisabled: true });
+  await b.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1080, deviceScaleFactor: 1, mobile: false });
+  await b.send('Page.navigate', { url: process.env.COMPANY_TEST_URL || 'http://127.0.0.1:5175/?image-venue-check' }); await b.sleep(1000);
+  await b.until(`document.querySelector('.three-viewport')?.dataset.ready === 'true' && document.querySelectorAll('.location-settings button').length === 3`);
+  await b.evaluate(`document.querySelectorAll('.location-settings button')[2].click()`); await b.sleep(500);
+  assert.equal(await b.evaluate(`document.querySelector('[aria-label="Presentation"]').value`), '3d');
+  assert.equal(await b.evaluate(`document.querySelectorAll('canvas').length`), 1);
+  await b.evaluate(`document.querySelector('.prototype-stadium').scrollIntoView()`); await b.screenshot('image-3d-desktop');
+  await b.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true }); await b.sleep(300);
+  assert.ok(await b.evaluate(`document.documentElement.scrollWidth <= innerWidth`));
+  await b.evaluate(`document.querySelector('.prototype-stadium').scrollIntoView()`); await b.screenshot('image-3d-mobile');
+  await b.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1080, deviceScaleFactor: 1, mobile: false });
+  await b.click('10SEC'); await b.evaluate(`document.querySelector('.start-button').click()`);
+  await b.until(`!!document.querySelector('.three-countdown')`); await b.sleep(4700);
+  await b.screenshot('image-3d-racing');
+  await b.evaluate(`document.querySelector('canvas').getContext('webgl2').getExtension('WEBGL_lose_context').loseContext()`);
+  await b.until(`document.body.textContent.includes('3D rendering paused')`); await b.click('Retry 3D');
+  await b.until(`document.querySelector('.three-viewport')?.dataset.ready === 'true'`); await b.click('Resume race');
+  await b.until(`document.querySelector('canvas')?.dataset.cameraView === 'winner'`); await b.screenshot('image-3d-winner');
+  assert.equal(await b.evaluate(`document.querySelector('.prototype-stadium').dataset.location`), 'company-image');
+  await b.click('Edit Participants'); await b.evaluate(`document.querySelectorAll('.location-settings button')[0].click()`); await b.sleep(300);
+  assert.equal(await b.evaluate(`document.querySelector('.prototype-stadium').dataset.location`), 'stadium');
+  assert.equal(await b.evaluate(`document.querySelector('.start-button').disabled`), false);
+  await b.evaluate(`document.querySelectorAll('.location-settings button')[2].click()`); await b.click('Use 2D');
+  assert.equal(await b.evaluate(`document.querySelector('.track-card').dataset.location`), 'company-image');
+  assert.deepEqual(b.errors, []);
+  console.log('PASS image backdrop with reused 3D runners, mobile, racing, recovery, podium, venue switching and 2D fallback.');
+} finally { b.ws.close(); }

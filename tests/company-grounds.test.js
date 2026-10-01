@@ -31,7 +31,7 @@ test('environment capacity uses the full roster, bounded to twelve, independent 
 });
 
 test('venue cameras fit runners and finish stripe on desktop, tablet and mobile', () => {
-  for (const location of ['stadium', 'company-grounds']) for (const [width, height] of [[1336, 707], [720, 600], [366, 540]]) for (const count of [2, 6, 12]) for (const view of ['stadium', 'side']) for (const finish of [false, true]) {
+  for (const location of ['stadium', 'company-grounds', 'company-image']) for (const [width, height] of [[1336, 707], [720, 600], [366, 540]]) for (const count of [2, 6, 12]) for (const view of ['stadium', 'side']) for (const finish of [false, true]) {
     const rear = -12;
     const pose = fitVenuePose(width, height, count, view, finish, rear, location);
     const camera = new PerspectiveCamera(45, width / height, .1, 300);

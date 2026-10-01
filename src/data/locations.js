@@ -1,6 +1,7 @@
 export const locations = Object.freeze({
   stadium: Object.freeze({ id: 'stadium', title: 'Stadium', description: 'A big stage for your team', cameraHeight: 1.65 }),
   'company-grounds': Object.freeze({ id: 'company-grounds', title: 'Company Grounds', description: 'A courtyard sprint at company headquarters', cameraHeight: .65 }),
+  'company-image': Object.freeze({ id: 'company-image', title: 'Company Grounds — Image', description: '3D runners with an illustrated venue backdrop', cameraHeight: 1.05 }),
 });
 
 export function normalizeLocation(id) {

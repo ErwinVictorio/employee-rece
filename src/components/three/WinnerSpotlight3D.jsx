@@ -86,7 +86,8 @@ function Stage() {
 }
 
 export default function WinnerSpotlight3D({ location = 'stadium', order, paused, reducedMotion, low }) {
-  const company = location === 'company-grounds';
+  const imageVenue = location === 'company-image';
+  const company = location === 'company-grounds' || imageVenue;
   const winner = order[0];
   const { size } = useThree();
   const turntable = useRef();
@@ -110,13 +111,13 @@ export default function WinnerSpotlight3D({ location = 'stadium', order, paused,
     gl.domElement.dataset.podiumIds = JSON.stringify(order.slice(0, 5).map(employee => employee.id));
   }, -1);
   return <>
-    <color attach="background" args={[company ? '#a0bdc3' : '#081324']} /><fog attach="fog" args={[company ? '#a0bdc3' : '#081324', 60, 100]} />
+    {!imageVenue && <><color attach="background" args={[company ? '#a0bdc3' : '#081324']} /><fog attach="fog" args={[company ? '#a0bdc3' : '#081324', 60, 100]} /></>}
     <hemisphereLight args={[company ? '#fff0d5' : '#c2d9ff', company ? '#82755c' : '#1e2741', 2.2]} />
     <primitive object={spotlightTarget} />
     <spotLight position={[0, 8, 2]} target={spotlightTarget} angle={.48} penumbra={.65} intensity={210} distance={22} color="#ffedb8" castShadow shadow-mapSize={[1024, 1024]} shadow-normalBias={.04} />
     <pointLight position={[-5, 3, -3]} color="#388dff" intensity={28} /><pointLight position={[3, 4, -2]} color="#f8be54" intensity={24} />
-    {company ? <><CompanyBuilding3D position={[0, 0, -11]} scale={.8} low={low} /><mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -.04, 0]} receiveShadow><planeGeometry args={[80, 80]} /><meshStandardMaterial color="#a99e8a" roughness={.9} /></mesh></> : <Stage />}
-    <Crowd3D celebration active paused={paused} reducedMotion={reducedMotion} low={low} />
+    {imageVenue ? null : company ? <><CompanyBuilding3D position={[0, 0, -11]} scale={.8} low={low} /><mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -.04, 0]} receiveShadow><planeGeometry args={[80, 80]} /><meshStandardMaterial color="#a99e8a" roughness={.9} /></mesh></> : <Stage />}
+    {!imageVenue && <Crowd3D celebration active paused={paused} reducedMotion={reducedMotion} low={low} />}
     <RunnerResources>{order.slice(0, 5).map((employee, index) => {
       const height = [1.12, .7, .6, .4, .35][index];
       return <group key={employee.id} position={[[0, -2.7, 2.7, -4.8, 4.8][index], 0, index === 0 ? .3 : 0]}>

@@ -1,3 +1,4 @@
+import companyBackdrop from '../../assets/company-grounds-backdrop.png';
 import { Component, createRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { characters } from '../../data/assets';
@@ -65,10 +66,10 @@ export default function RaceScene3D({ location = 'stadium', employees: allEmploy
   }, []);
   return <section className="prototype-stadium" aria-label={`3D ${locations[venue].title}`} data-location={venue} data-environment-lanes={capacity}>
     {allEmployees.length > 12 && !celebrating && <div className="focus-controls"><label>Focused lanes <select aria-label="Focused lanes" value={laneGroup} onChange={e => setLaneGroup(e.target.value)}><option value="auto">Follow live leader</option>{Array.from({ length: Math.ceil(allEmployees.length / 12) }, (_, i) => <option key={i} value={i}>Lanes {i * 12 + 1}–{Math.min(allEmployees.length, (i + 1) * 12)}</option>)}</select></label><span>Viewing lanes {laneStart + 1}–{laneStart + employees.length} of {allEmployees.length}. Everyone is racing.</span></div>}
-    <div className="three-viewport" data-ready={ready && !failed} data-fps={fps}>
+    <div className="three-viewport" style={venue === 'company-image' ? { backgroundImage: `url(${companyBackdrop})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined} data-ready={ready && !failed} data-fps={fps}>
       {!failed && <SceneBoundary key={attempt} onError={onLost}><Canvas frameloop={game.race && !game.paused && (!celebrating || (!reduced && !celebrationPaused)) ? 'always' : 'demand'} shadows={!low} dpr={low ? 1 : [1, 1.5]} camera={{ fov: 45, near: 0.1, far: 300 }} gl={{ antialias: !low }} fallback={<div className="three-fallback">3D unavailable. <button onClick={onFallback}>Continue in 2D</button></div>}>
-        {celebrating ? <WinnerSpotlight3D location={venue} key={game.race.id} order={game.race.order} paused={celebrationPaused} reducedMotion={reduced} low={low} /> : <><RaceEnvironment location={venue} laneCount={venue === 'company-grounds' ? capacity : employees.length} game={game} reducedMotion={reduced} low={low} />
-        <RaceCamera location={venue} game={game} laneCount={venue === 'company-grounds' ? capacity : employees.length} view={view} finishCam={finishCam} reducedMotion={reduced} />
+        {celebrating ? <WinnerSpotlight3D location={venue} key={game.race.id} order={game.race.order} paused={celebrationPaused} reducedMotion={reduced} low={low} /> : <><RaceEnvironment location={venue} laneCount={venue !== 'stadium' ? capacity : employees.length} game={game} reducedMotion={reduced} low={low} />
+        <RaceCamera location={venue} game={game} laneCount={venue !== 'stadium' ? capacity : employees.length} view={view} finishCam={finishCam} reducedMotion={reduced} />
 
         <RunnerResources>{employees.map((employee, lane) => <Runner3D key={employee.id} employee={employee} lane={lane} laneCount={employees.length} color={characters[employee.character].color} race={game.race} elapsed={game.elapsed} animationTime={game.animationTime} labelRef={labels[lane]} reducedMotion={reduced} />)}</RunnerResources>
         <RunnerLabels employees={employees} labels={labels} connectors={connectors} game={game} labeled={labeled} /></>}

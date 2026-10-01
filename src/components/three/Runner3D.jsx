@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { BoxGeometry, MeshStandardMaterial, SphereGeometry, Vector3 } from 'three';
 import { sampleRunner } from '../../utils/raceMotion';
+import { groundedBodyY } from '../../utils/runnerGrounding';
 
 const Resources = createContext(null);
 export function RunnerResources({ children }) {
@@ -48,7 +49,7 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
     const prone = ['falling', 'fallen', 'recovering'].includes(pose);
     const swing = running && !reducedMotion && !prone ? Math.sin(phase) : 0;
     root.current.position.set(showcase ? 0 : -10 + progress * 20, 0.08, showcase ? 0 : (lane - (laneCount - 1) / 2) * 3.2);
-    body.current.position.y = running && !reducedMotion ? Math.abs(Math.sin(phase)) * 0.13 : 0;
+    body.current.position.y = 0;
     const blend = x => x * x * (3 - 2 * x);
     const lean = pose === 'stumbling' ? 0.25 * blend(t) : pose === 'falling' ? 0.25 + 1.15 * blend(t) : pose === 'fallen' ? 1.4 : pose === 'recovering' ? 1.4 * (1 - blend(t)) : 0;
     body.current.rotation.x = reducedMotion ? 0 : lean;
@@ -73,6 +74,13 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
       leftKnee.current.rotation.x = .9 * push;
       rightKnee.current.rotation.x = .45 * push;
     }
+    if (!prone || reducedMotion) {
+      body.current.position.y = groundedBodyY(
+        leftLeg.current.rotation.x, leftKnee.current.rotation.x,
+        rightLeg.current.rotation.x, rightKnee.current.rotation.x,
+        body.current.rotation.x,
+      );
+    }
     const dustAge = sample.event ? time - sample.event.groundAt : -1;
     dust.current.visible = !reducedMotion && dustAge >= 0 && dustAge < .55;
     if (dust.current.visible) {
@@ -93,7 +101,7 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
   });
 
   return <group ref={root} name={`runner-${employee.id}`}>
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[.35, -.025, 0]} scale={[1.0, .56, 1]}><circleGeometry args={[1, 24]} /><meshBasicMaterial color="#48362c" transparent opacity={.18} depthWrite={false} /></mesh>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -.06, 0]} scale={[1.0, .56, 1]}><circleGeometry args={[1, 24]} /><meshBasicMaterial color="#48362c" transparent opacity={.24} depthWrite={false} /></mesh>
     <group ref={dust} visible={false}>{Array.from({ length: 6 }, (_, i) => <mesh key={i}><sphereGeometry args={[1, 6, 4]} /><meshBasicMaterial color="#edcda4" /></mesh>)}</group>
     <group rotation={[0, Math.PI / 2, 0]}><group ref={body}>
       <Part position={[0, 1.85, 0]} scale={[0.43, 0.55, 0.29]} color={color} round />

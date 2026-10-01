@@ -19,6 +19,8 @@ npm run build
 
 ## Play
 
+The third location, **Company Grounds — Image**, reuses the 3D runners, race cameras and podium over an illustrated company courtyard backdrop. The backdrop was cleaned from the reference to remove sample racers and interface elements. The existing 2D option remains available as a fallback.
+
 Choose **Stadium** (the default) or **Company Grounds** in Race location. Company Grounds adds a concrete courtyard, a procedural company building and an entrance backdrop for the winner podium. Location changes update the preview without generating a result. Replay, Edit Participants, Reset and New Game retain the location; reload restores Stadium.
 
 Both venues use the same race simulation and support all 100 participants. Company Grounds keeps its environment footprint fixed when focused lane groups change. Its 2D mode uses a simplified building banner with the existing full lane list. See [Company Grounds implementation and verification](Docs/COMPANY_GROUNDS_IMPLEMENTATION_NOTES.md) for screenshots, measured rendering costs and limitations.

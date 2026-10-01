@@ -1189,3 +1189,8 @@ footer b {
 .company-banner small { font-size: 11px; color: #c6d3e2; margin-top: 5px; }
 [data-location="company-grounds"].prototype-stadium { border-color: #d9b95c; }
 [data-location="company-grounds"] .broadcast-title>svg { color: #ffcf63; }
+.location-settings button:last-child:nth-child(3) { grid-column: 1 / -1; }
+.company-image-banner { margin: 0; background: #122239; }
+.company-image-banner img { display: block; width: 100%; height: auto; }
+.company-image-banner figcaption { padding: 12px 18px; color: #ffd16a; font-size: 13px; }
+.company-image-banner figcaption span { display: block; color: #b6c3d4; font-size: 11px; margin-top: 5px; line-height: 1.5; }
