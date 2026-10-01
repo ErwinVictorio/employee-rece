@@ -4,6 +4,21 @@ import { createRace } from '../src/utils/race.js';
 import { sampleRunner, validateRacePlan } from '../src/utils/raceMotion.js';
 const roster = n => Array.from({ length: n }, (_, id) => ({ id, name: `Runner ${id}` }));
 const rng = seed => () => ((seed = (1664525 * seed + 1013904223) >>> 0) / 4294967296);
+
+test('final stretch has visible field separation without changing crossing times', () => {
+  for (const count of [2, 6, 12]) for (const duration of [10, 15, 20, 30]) for (const funMoments of [false, true]) for (let seed = 1; seed <= 12; seed++) {
+    const race = createRace(roster(count), duration, { funMoments }, rng(seed));
+    const positions = race.runners.map(r => sampleRunner(r, duration * .75).progress);
+    const spread = Math.max(...positions) - Math.min(...positions);
+    assert.ok(spread >= .15 && spread <= .17, `spread=${spread}`);
+    race.runners.forEach((r, rank) => {
+      assert.equal(r.finishTime, duration * (.9 + .1 * rank / (count - 1)));
+      const before = sampleRunner(r, duration * .75 - .00001);
+      const after = sampleRunner(r, duration * .75 + .00001);
+      assert.ok(Math.abs(before.speed - after.speed) < .0001);
+    });
+  }
+});
 test('motion and events obey bounds across roster sizes, durations and settings', () => {
   for (let n = 2; n <= 12; n++) for (const duration of [10, 15, 20, 30]) for (const funMoments of [false, true]) for (let seed = 1; seed <= 12; seed++) {
     const race = createRace(roster(n), duration, { funMoments }, rng(seed));

@@ -50,8 +50,20 @@ export function buildMotionPlan(events, duration, finishTime, random) {
     velocities.push(speedAt(i * dt));
     if (i) points.push(points[i - 1] + (velocities[i - 1] + velocities[i]) * dt / 2);
   }
-  const scale = (0.80 + random() * 0.025) / points.at(-1);
-  for (let i = 0; i < points.length; i++) { points[i] *= scale; velocities[i] *= scale; }
+  // Coordinated targets spread the field instead of forcing everyone into a
+  // half-unit pack. Keep the random draw stable for existing seeded races.
+  const draw = random();
+  const rankFraction = Math.max(0, Math.min(1, (finishTime / duration - .9) / .1));
+  const base = .80 + draw * .025;
+  const scale = base / points.at(-1);
+  const offset = .84 - .16 * rankFraction + draw * .008 - base;
+  const from = base * .35, span = base - from;
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i] * scale;
+    const t = Math.max(0, Math.min(1, (p - from) / span));
+    points[i] = p + offset * smooth(t);
+    velocities[i] *= scale * (1 + offset * 6 * t * (1 - t) / span);
+  }
   return Object.freeze({ dt, split, finishTime, points: Object.freeze(points), velocities: Object.freeze(velocities) });
 }
 
