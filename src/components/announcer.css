@@ -1,0 +1,7 @@
+.announcer-controls { display:flex; align-items:center; flex-wrap:wrap; gap:16px; margin-block:16px; padding:14px; }
+.announcer-controls label { display:flex; align-items:center; gap:8px; font-size:12px; }
+.announcer-controls select { max-width:min(340px,65vw); background:#10243c; color:white; border:1px solid #527292; padding:7px; border-radius:5px; }
+.announcer-controls small { width:100%; color:#b8cce5; }
+.announcer-caption { position:absolute; z-index:22; top:85px; left:50%; transform:translateX(-50%); max-width:65%; padding:9px 15px; background:#07152df0; border:1px solid #76c5ff; border-radius:8px; color:white; font-size:15px; text-align:center; pointer-events:none; }
+.race-presentation:not(:fullscreen) .announcer-caption { top:8px; }
+@media(max-width:700px) { .announcer-caption { font-size:12px; max-width:90%; width:max-content; top:90px; } }

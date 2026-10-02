@@ -3,7 +3,7 @@ import countdown from '../assets/SoundEffects/transcendedlifting-race-start-beep
 import steps from '../assets/SoundEffects/freeeverythingxx-running-on-concrete-268478.mp3';
 import crowd from '../assets/SoundEffects/vishiv-crowd-cheering-in-stadium-435357.mp3';
 import success from '../assets/SoundEffects/freesound_community-success-1-6297.mp3';
-export function useGameAudio(state, effects, ambience, game = {}) {
+export function useGameAudio(state, effects, ambience, game = {}, speaking = false) {
   const oscillators = useRef(new Set());
   const bank = useRef(null);
   const synth = useRef(null);
@@ -29,6 +29,8 @@ export function useGameAudio(state, effects, ambience, game = {}) {
       previous.current = { id: race?.id, elapsed: 0 };
       Object.values(bank.current || {}).forEach(s => { s.pause(); s.currentTime = 0; });
     }
+    bank.current.crowd.volume = speaking ? .075 : .3;
+    bank.current.success.volume = speaking ? .15 : 1;
     const active = ['racing', 'finalStretch', 'finished'].includes(state);
     for (const [key, sound] of Object.entries(bank.current || {})) {
       const oneShot = key === 'countdown' || key === 'success';
@@ -58,7 +60,7 @@ export function useGameAudio(state, effects, ambience, game = {}) {
       synth.current?.suspend().catch(() => {});
     }
     else synth.current?.resume().catch(() => {});
-  }, [state, effects, ambience, paused, race?.id, game.phaseTime]);
+  }, [state, effects, ambience, paused, race?.id, game.phaseTime, speaking]);
   useEffect(() => {
     const last = previous.current.elapsed;
     for (const runner of race?.runners || []) for (const event of runner.events) {
@@ -81,9 +83,9 @@ export function useGameAudio(state, effects, ambience, game = {}) {
       }
     }
     const grounded = race?.runners.filter(r => r.events.some(e => elapsed >= e.groundAt && elapsed < e.comebackAt)).length || 0;
-    if (bank.current) bank.current.steps.volume = .22 * (1 - grounded / (race?.runners.length || 1));
+    if (bank.current) bank.current.steps.volume = .22 * (speaking ? .25 : 1) * (1 - grounded / (race?.runners.length || 1));
     previous.current.elapsed = elapsed;
-  }, [race, elapsed, effects, paused]);
+  }, [race, elapsed, effects, paused, speaking]);
   return () => {
     try {
       synth.current ||= new AudioContext();
