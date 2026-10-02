@@ -49,7 +49,8 @@ try {
   await enter();
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.cinematic-leaders li>span')].map(e=>e.textContent)`), top);
   assert.equal(await evaluate(`document.querySelector('canvas').dataset.cameraView`), 'rolling');
-  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.three-labels')).display`), 'none');
+  assert.notEqual(await evaluate(`getComputedStyle(document.querySelector('.three-labels')).display`), 'none');
+  await until(`[...document.querySelectorAll('.three-name')].some(e=>getComputedStyle(e).visibility==='visible' && getComputedStyle(e.querySelector('.label-name')).display!=='none')`);
   const held = await evaluate(`document.querySelector('.cinematic-clock strong').textContent`);
   await advance(6000);
   assert.equal(await evaluate(`document.querySelector('.cinematic-clock strong').textContent`), held);

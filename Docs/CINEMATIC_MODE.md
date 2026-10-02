@@ -15,3 +15,5 @@ Validation:
 - ESLint and production build passed. Existing large-chunk warning remains.
 
 Fullscreen support depends on the browser; rejection leaves the normal layout available. Mobile checks use browser emulation, not a physical phone.
+
+Name-label update: cinematic now retains compact runner names, lane numbers and connector lines during the race, including overview mode. Label placement uses cinematic overlay margins and up to ten staggered rows to avoid overlaps. Labels that cannot fit safely are hidden; opening ceremony labels retain their existing behavior. This supersedes the label suppression above. Lint, build and cinematic browser lifecycle checks passed with visible-name verification.

@@ -2,7 +2,12 @@
 .race-presentation:fullscreen { width:100vw; height:100dvh; background:#081324; overflow:hidden; }
 .race-presentation:fullscreen .prototype-stadium { height:100%; border:0; border-radius:0; box-shadow:none; }
 .race-presentation:fullscreen .prototype-stadium .three-viewport { height:100dvh; width:100%; }
-.race-presentation:fullscreen .prototype-controls,.race-presentation:fullscreen .full-field-locator,.race-presentation:fullscreen .three-labels,.race-presentation:fullscreen .runner-connectors { display:none; }
+.race-presentation:fullscreen .prototype-controls,.race-presentation:fullscreen .full-field-locator { display:none; }
+.race-presentation:fullscreen .three-name { max-width:150px; padding:3px 7px; gap:5px; font-size:11px; border-radius:7px; }
+.race-presentation:fullscreen .three-name .label-name { display:inline; }
+.race-presentation:fullscreen .three-name .racer-portrait { display:none; }
+.race-presentation:fullscreen .three-name b { height:17px; min-width:17px; font-size:10px; }
+@media(max-width:700px) { .race-presentation:fullscreen .three-name { max-width:110px; font-size:10px; } }
 .race-presentation:fullscreen .three-fallback,.race-presentation:fullscreen .three-loading { z-index:15; }
 .race-presentation:fullscreen>.panel { margin:110px 24px; }
 .cinematic-broadcast { position:absolute; inset:0; z-index:20; pointer-events:none; color:#f5f8ff; font-variant-numeric:tabular-nums; }
