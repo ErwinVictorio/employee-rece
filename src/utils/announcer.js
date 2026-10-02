@@ -43,35 +43,42 @@ export function createAnnouncerDetector() {
 }
 
 export function createSpeechPlayer({ synth, Utterance, change, schedule = setTimeout, unschedule = clearTimeout }) {
-  let generation = 0, timer, active = false, discard;
+  let generation = 0, timer, active = false, discard, currentUtterance = null;
   function cancel() {
     generation++; unschedule(timer); active = false;
     discard?.(); discard = null;
     synth?.cancel(); change({ speaking: false, caption: '' });
+    currentUtterance = null;
   }
-  function say(text, { voice, volume = .8, silent = false, onDiscarded } = {}) {
+  function say(text, { voice, volume = .8, silent = false, onDiscarded, isRelevant = () => true } = {}) {
     cancel(); const token = generation; active = true;
     discard = onDiscarded;
-    const finish = () => { if (token !== generation) return; unschedule(timer); active = false; change({ speaking: false, caption: '' }); };
-    const fallback = () => {
+    const finish = () => { if (token !== generation) return; unschedule(timer); active = false; currentUtterance = null; discard = null; change({ speaking: false, caption: '' }); };
+    const fallback = (reason = 'speech-timeout') => {
       if (token !== generation) return;
       unschedule(timer); generation++; const fallbackToken = generation;
       discard = null;
-      synth?.cancel(); change({ speaking: false, caption: text, status: 'Speech unavailable — captions only. Try Test Voice.' });
+      synth?.cancel(); currentUtterance = null;
+      change({ speaking: false, caption: text, status: `Speech unavailable (${reason}) — captions only. Tap Test Voice / Enable voice to retry.` });
       timer = schedule(() => { if (generation === fallbackToken) { active = false; change({ caption: '' }); } }, 4000);
     };
-    if (!synth || !Utterance || !voice) { fallback(); return; }
+    if (!synth || !Utterance) { fallback('not-supported'); return; }
     const utterance = new Utterance(text);
-    utterance.voice = voice; utterance.lang = voice.lang; utterance.volume = silent ? 0 : volume; utterance.rate = 1.05;
+    currentUtterance = utterance;
+    // An empty getVoices() list can be temporary on mobile. Let the device
+    // resolve its default voice instead of refusing to speak.
+    if (voice) utterance.voice = voice;
+    utterance.lang = voice?.lang || 'en-US'; utterance.volume = silent ? 0 : volume; utterance.rate = 1.05;
     utterance.onstart = () => {
       if (token !== generation) return;
+      if (!isRelevant()) { cancel(); return; }
       discard = null;
       unschedule(timer); change({ speaking: !silent, caption: silent ? '' : text, status: '' });
       timer = schedule(fallback, 15000);
     };
-    utterance.onend = finish; utterance.onerror = fallback;
-    timer = schedule(fallback, 3500);
-    try { synth.resume(); synth.speak(utterance); } catch { fallback(); }
+    utterance.onend = finish; utterance.onerror = event => fallback(event?.error || 'synthesis-failed');
+    timer = schedule(() => fallback('start-timeout'), 10000);
+    try { if (synth.paused) synth.resume(); synth.speak(utterance); } catch { fallback('speak-failed'); }
   }
-  return { say, cancel, get busy() { return active; } };
+  return { say, cancel, get busy() { return active; }, get utterance() { return currentUtterance; } };
 }

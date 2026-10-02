@@ -9,6 +9,8 @@ export function useRaceAnnouncer(game, muted) {
   const [voiceId, setVoiceId] = useState('');
   const [output, setOutput] = useState({ speaking: false, caption: '', status: '' });
   const player = useRef(null);
+  const startingVoice = useRef(false);
+  const liveRows = useRef([]);
   const detector = useMemo(() => createAnnouncerDetector(), []);
   const voice = voices.find(v => v.voiceURI === voiceId) || voices.find(v => v.localService && /^en/i.test(v.lang)) || voices.find(v => /^en/i.test(v.lang)) || voices[0];
   useEffect(() => {
@@ -22,19 +24,28 @@ export function useRaceAnnouncer(game, muted) {
   }, []);
   const cancel = useCallback(() => player.current?.cancel(), []);
   const { race, state, elapsed, paused } = game;
-  useEffect(() => { cancel(); }, [race?.id, paused, enabled, muted, volume, voice, cancel]);
+  useEffect(() => {
+    if (!race?.id || !startingVoice.current) cancel();
+    startingVoice.current = false;
+  }, [race?.id, cancel]);
+  useEffect(() => { cancel(); }, [paused, enabled, muted, volume, voiceId, cancel]);
+  useEffect(() => { if (state === 'countdown') cancel(); }, [state, cancel]);
   useEffect(() => {
     const active = !!race && enabled && !muted && volume > 0 && !paused && !document.hidden && ['racing', 'finalStretch', 'finished', 'results'].includes(state);
     const rows = active ? race.runners.map(r => ({ ...r, ...sampleRunner(r, elapsed) })).sort((a, b) => b.progress - a.progress || a.finishTime - b.finishTime) : [];
+    liveRows.current = rows;
     const event = detector.tick({ id: race?.id, elapsed, rows, active, busy: player.current?.busy });
-    if (event) player.current?.say(event.text, { voice, volume, onDiscarded: event.kind === 'winner' ? () => detector.retryWinner() : undefined });
+    if (event) player.current?.say(event.text, { voice, volume, onDiscarded: event.kind === 'winner' ? () => detector.retryWinner() : undefined,
+      isRelevant: () => event.kind === 'comeback' ? liveRows.current.some(r => r.employee.id === event.id && r.pose === 'comeback') : liveRows.current[event.kind === 'second' ? 1 : 0]?.employee.id === event.id,
+    });
   }, [race, elapsed, state, paused, enabled, muted, volume, voice, detector]);
   const prepare = () => {
     cancel();
-    if (enabled && !muted && volume > 0 && voice) player.current?.say(' ', { voice, volume, silent: true });
+    startingVoice.current = true;
+    if (enabled && !muted && volume > 0) player.current?.say('Announcer ready.', { voice, volume });
   };
   return { enabled, setEnabled, volume, setVolume, voices, voiceId: voice?.voiceURI || '', setVoiceId,
-    ...output, status: output.status || (!voices.length ? 'No browser voice available — captions only.' : ''),
+    ...output, status: output.status || (!voices.length ? 'Voice list is loading or unavailable. Test Voice will try the device default.' : ''),
     cancel, prepare, test: () => player.current?.say('Welcome, racers! Your race announcer is ready.', { voice, volume }),
     canTest: enabled && !muted && volume > 0,
   };

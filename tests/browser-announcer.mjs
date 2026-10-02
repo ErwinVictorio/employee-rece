@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { connect } from './company-browser-helpers.mjs';
 const b=await connect(); const {send,evaluate,until,click,sleep}=b; let injection;
 try {
+  await send('Runtime.discardConsoleEntries'); b.errors.length=0;
   injection=await send('Page.addScriptToEvaluateOnNewDocument',{source:`
     window.voiceCalls=[]; window.voiceCancels=0; window.media=[]; window.pendingVoice=null;
     const audio=window.Audio; window.Audio=function(...args){const a=new audio(...args);media.push(a);return a;};
@@ -24,7 +25,8 @@ try {
   await click('Test Voice');await sleep(100);
   await evaluate(`document.querySelector('.start-button').click()`);
   await until(`document.querySelector('.event-welcome')?.dataset.phase==='arrival'`);
-  assert.equal(await evaluate(`!!document.querySelector('.announcer-caption')`),false);
+  await until(`document.querySelector('.announcer-caption')?.textContent==='Announcer ready.'`);
+  await evaluate(`pendingVoice.onend()`);
   for(const ms of [3100,10100,3100,4100]){await evaluate(`raceOffset+=${ms}`);await sleep(150);}
   await evaluate(`raceOffset+=1000`);await sleep(150);
   // Sample real motion over time until one genuine event has spoken.

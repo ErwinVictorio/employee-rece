@@ -1,6 +1,6 @@
 # Spoken race announcer — browser speech
 
-Status: proposal only. Revised 2026-10-02 at the user's request: no external speech API. This plan supersedes the ElevenLabs integration proposal. No game code changes are included in this planning update.
+Status: implemented 2026-10-02 with browser speech; no external speech API. This supersedes the ElevenLabs integration proposal.
 
 ## Approach
 
@@ -33,4 +33,21 @@ Use browser-provided speech synthesis (`window.speechSynthesis` and `SpeechSynth
 - No external TTS API calls, paid generation, backend service or account setup.
 - No guarantee that every overtake will be spoken: short races and rapid changes require selective commentary.
 - No guarantee of identical voices across devices. When speech cannot run, the race continues with visible captions.
-- Implementation begins separately after this plan update.
+- Implemented in `useRaceAnnouncer`, the pure announcer detector/speech player, `AnnouncerControls`, normal/cinematic captions, and existing game audio mixing. Unused ElevenLabs SDK removed from the dependency manifest and lockfile.
+
+## Implementation verification
+
+### Mobile speech follow-up
+
+- Replaced blank, muted startup speech with an audible "Announcer ready." utterance called directly from Start Event. The new race snapshot no longer cancels this activation; pause, reset, mute and countdown still cancel speech.
+- Voice-list refresh no longer cancels playback merely because browser voice object identities changed. Empty voice lists now try the device's default English voice.
+- Keep a strong reference to the current utterance until completion/cancellation, allow ten seconds for initial speech startup, and expose the actual speech error or timeout reason.
+- Test Voice remains available as Enable voice during the event for direct user-gesture retry.
+- Eight focused speech tests, lint and the mocked browser announcer lifecycle passed. Physical iPhone 16e output remains unverified; these changes address observed code defects rather than proving the device's root cause.
+
+- Full existing/new suite passed 67 tests before the final two additional speech lifecycle tests; final focused announcer suite passed seven tests (including unspoken winner retry and stale playback rejection).
+- ESLint and production build passed; existing large bundle warning remains.
+- Browser test with mocked speech passed voice-list updates, Test Voice, crowd duck/restore, cancellation at start, actual race event speech, fullscreen continuity, pause/resume, winner once, master mute, reset, hidden-tab cancellation, speech errors and no-voice caption fallback.
+- Source and generated-build search found no ElevenLabs references or provider-key patterns. Application code makes no TTS network requests; online voices are explicitly labeled and remain browser/vendor-managed.
+- Browser speech uses device voices and `voiceschanged` per MDN: https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices and https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService.
+- Automated tests use a mocked voice engine and do not prove audible output. Use Test Voice on the actual event computer/phone to verify pronunciation, playback permission and speaker volume. Offline availability depends on the selected voice. Physical device listening remains unverified.

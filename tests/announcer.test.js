@@ -67,3 +67,15 @@ test('unspoken winner can retry after pause but started winner cannot duplicate'
   f.player.say('A wins!',{voice:{lang:'en'},onDiscarded:()=>retries++});
   f.spoken.at(-1).onstart();f.player.cancel();assert.equal(retries,1);
 });
+test('late playback drops an overtake which is no longer relevant', () => {
+  const f=fixture(); f.player.say('A leads',{voice:{lang:'en'},isRelevant:()=>false});
+  f.spoken[0].onstart();assert.equal(f.output.caption,'');assert.equal(f.player.busy,false);
+});
+test('mobile can speak with the device default while voices are loading', () => {
+  const f=fixture(); f.player.say('Announcer ready.');
+  assert.equal(f.spoken.length,1); assert.equal(f.spoken[0].lang,'en-US');
+  assert.equal(f.player.utterance,f.spoken[0]);
+  f.spoken[0].onstart(); assert.equal(f.output.caption,'Announcer ready.');
+  f.spoken[0].onerror({error:'not-allowed'}); assert.match(f.output.status,/not-allowed/);
+  assert.equal(f.player.utterance,null);
+});
