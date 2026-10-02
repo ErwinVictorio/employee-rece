@@ -1,0 +1,18 @@
+.race-presentation { position:relative; }
+.race-presentation:fullscreen { width:100vw; height:100dvh; background:#081324; overflow:hidden; }
+.race-presentation:fullscreen .prototype-stadium { height:100%; border:0; border-radius:0; box-shadow:none; }
+.race-presentation:fullscreen .prototype-stadium .three-viewport { height:100dvh; width:100%; }
+.race-presentation:fullscreen .prototype-controls,.race-presentation:fullscreen .full-field-locator,.race-presentation:fullscreen .three-labels,.race-presentation:fullscreen .runner-connectors { display:none; }
+.race-presentation:fullscreen .three-fallback,.race-presentation:fullscreen .three-loading { z-index:15; }
+.race-presentation:fullscreen>.panel { margin:110px 24px; }
+.cinematic-broadcast { position:absolute; inset:0; z-index:20; pointer-events:none; color:#f5f8ff; font-variant-numeric:tabular-nums; }
+.cinematic-clock { position:absolute; top:20px; left:24px; display:flex; align-items:center; gap:16px; padding:12px 18px; border-left:3px solid #51bbff; border-radius:3px; background:#07152de8; box-shadow:0 5px 24px #0003; }
+.cinematic-clock span { font-size:10px; font-weight:800; letter-spacing:.15em; color:#a4c8ec; }.cinematic-clock strong { font-size:28px; line-height:1; }
+.cinematic-actions { position:absolute; top:20px; right:24px; display:flex; gap:8px; pointer-events:auto; }
+.cinematic-actions button { border:1px solid #90bce34d; border-radius:5px; padding:10px 14px; background:#07152ddb; color:white; font-size:12px; }
+.cinematic-actions button:focus-visible { outline:3px solid #74cfff; outline-offset:3px; }
+.cinematic-bottom { position:absolute; bottom:22px; left:24px; right:24px; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; }
+.cinematic-leaders { width:280px; max-width:60%; background:#07152de8; border-radius:4px; overflow:hidden; box-shadow:0 5px 24px #0003; }
+.cinematic-leaders h2 { margin:0; padding:7px 12px; background:#163c61; font-size:10px; letter-spacing:.16em; }.cinematic-leaders ol { list-style:none; margin:0; padding:0; }.cinematic-leaders li { display:flex; gap:10px; align-items:center; padding:7px 12px; border-top:1px solid #7ba8d01c; font-size:13px; }.cinematic-leaders b { color:var(--team-color); width:17px; }.cinematic-leaders li>span { flex:1; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }.cinematic-leaders small { color:#a2bad3; font-size:9px; }.cinematic-leaders p { font-size:11px; color:#b4cbe3; margin:10px 12px; }
+.cinematic-status { margin:0; padding:10px 14px; border-radius:4px; background:#07152de8; font-size:12px; display:flex; align-items:center; gap:9px; }.cinematic-status i { width:6px; height:6px; border-radius:50%; background:#a8c2dc; }.cinematic-status .is-live { background:#51ddb0; }
+@media(max-width:700px) { .cinematic-clock { top:12px; left:12px; display:grid; gap:4px; padding:8px 10px; }.cinematic-clock strong { font-size:23px; }.cinematic-clock span { font-size:8px; }.cinematic-actions { top:12px; right:12px; gap:5px; }.cinematic-actions button { padding:9px; font-size:10px; }.cinematic-bottom { left:12px; right:12px; bottom:12px; gap:8px; }.cinematic-leaders { width:230px; max-width:65%; }.cinematic-leaders li { font-size:11px; padding:6px 9px; }.cinematic-status { font-size:10px; padding:8px; max-width:35%; } }

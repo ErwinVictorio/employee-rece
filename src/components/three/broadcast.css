@@ -65,3 +65,17 @@
 }
 .broadcast-board.large-field { max-height: 330px; pointer-events: auto; overflow-y: auto; }
 @media(max-width:700px) { .broadcast-board.large-field { max-height: 125px; }.broadcast-board.large-field ol { display: block; } }
+.full-field-locator { padding: 10px 18px; background: #14243a; color: #c8daee; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 12px; }
+.full-field-locator svg { width: 100%; height: 70px; background: #0c182b; border-radius: 6px; }
+.full-field-locator select { max-width: 250px; }
+.broadcast-board { pointer-events: auto; max-height: 330px; overflow-y: auto; }
+.focus-employee { color: inherit; background: none; border: 0; padding: 0; font: inherit; text-align: left; cursor: pointer; }
+.prototype-stadium .three-name.overview-name { padding: 1px; }
+.prototype-stadium .three-name.overview-name .label-name, .prototype-stadium .three-name.overview-name .racer-portrait { display: none; }
+.prototype-stadium .three-name.overview-name b { font-size: 10px; min-width: 16px; height: 16px; }
+@media(max-width:700px) { .broadcast-board { max-height: 125px; } .prototype-stadium .three-name.compact-name:not(.overview-name) .label-name { display: inline; } .camera-options { flex-wrap: wrap; } }
+.prototype-stadium .three-name.compact-name:not(.overview-name) .label-name { display: inline; }
+.race-active .three-viewport { height: clamp(420px, calc(100dvh - 340px), 740px); }
+.full-field-locator svg { height: 55px; }
+.full-field-locator button, .full-field-locator select { border: 1px solid #536982; border-radius: 6px; padding: 6px 10px; color: #e5efff; background: #203750; font: inherit; }
+@media(max-width:700px) { .race-active .three-viewport { height: max(420px, calc(100dvh - 350px)); } .full-field-locator { padding: 8px 10px; font-size: 10px; gap: 6px; } .full-field-locator select { max-width: 175px; } }

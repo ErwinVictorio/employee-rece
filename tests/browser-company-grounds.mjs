@@ -22,7 +22,7 @@ try {
   await venue(1);
   await screenshot('company-desktop');
   const company = await metrics();
-  await click('Trackside view'); await screenshot('company-side'); await click('Wide view');
+  await click('Rolling camera'); await screenshot('company-side'); await click('All runners');
   for (let i = 0; i < 4; i++) { await venue(0); await venue(1); }
   assert.equal(await evaluate(`document.querySelectorAll('canvas').length`), 1);
   const afterSwitches = await metrics();

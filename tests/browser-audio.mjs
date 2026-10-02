@@ -55,7 +55,7 @@ try {
   await sleep(100);
   assert.equal(await evaluate(`soundPlays.filter(s=>s.includes('race-start')).length`), countdownPlays);
   await until(`cueCount === 2`);
-  await click('Trackside view'); await click('Stadium view');
+  await click('Rolling camera'); await click('All runners');
   await sleep(500);
   assert.equal(await evaluate(`cueCount`), 2);
   await until(`!!document.querySelector('.results-panel')`);

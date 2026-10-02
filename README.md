@@ -23,7 +23,7 @@ The third location, **Company Grounds — Image**, reuses the 3D runners, race c
 
 Choose **Stadium** (the default) or **Company Grounds** in Race location. Company Grounds adds a concrete courtyard, a procedural company building and an entrance backdrop for the winner podium. Location changes update the preview without generating a result. Replay, Edit Participants, Reset and New Game retain the location; reload restores Stadium.
 
-Both venues use the same race simulation and support all 100 participants. Company Grounds keeps its environment footprint fixed when focused lane groups change. Its 2D mode uses a simplified building banner with the existing full lane list. See [Company Grounds implementation and verification](Docs/COMPANY_GROUNDS_IMPLEMENTATION_NOTES.md) for screenshots, measured rendering costs and limitations.
+Both venues use the same race simulation and support all 100 participants. The course expands to give every employee a stable lane. Company Grounds expands the courtyard without stretching its building. Its 2D mode uses a simplified building banner with the existing full lane list.
 
 The initial six names are editable samples. Add, edit, or remove racers; choose a red, blue, yellow, pink, purple, or green character; optionally upload a JPG, PNG, or WebP photo (up to 5 MB). Photos are resized locally and never uploaded. Names, photos, and settings last for the current tab session only; reloading restores samples.
 
@@ -33,7 +33,9 @@ The finish screen includes a podium, View Results, Race Again, Edit Participants
 
 ## Main 3D stadium
 
-Supported WebGL2 browsers use the 3D stadium by default. Fields above twelve use a selectable twelve-lane broadcast window; all employees still race. Choose **2D / low power** in setup or **Use 2D** during a race. Both views share the same race, elapsed time, events, and finish order. Low quality is the default; stadium and elevated trackside cameras fit the whole field.
+Supported WebGL2 browsers use the 3D stadium by default. All selected employees remain rendered, up to 100. Setup uses a full-field overview; racing automatically sweeps across the lanes; the final stretch returns to an overview through the last crossing. **All runners** returns to overview. **Focus lane** or a name in standings smoothly focuses a runner; **Resume auto camera** restores the sweep. The full-field locator tracks every employee. Reduced motion keeps a stable overview. Camera choices reset on replay.
+
+Choose **2D / low power** in setup or **Use 2D** during a race. Both views share the same race, elapsed time, events, and finish order. Low quality is the default and never removes employees. Fields above twelve use instanced character parts. See [full-roster camera verification](Docs/FULL_ROSTER_CAMERA_IMPLEMENTATION.md).
 
 **Fun moments** defaults to ON. Randomly selected runners slow down, tumble, get up, and recover; any runner, including the winner, can fall. Turning this off preserves normal racing. Falls never reroll the result. Full names and lane numbers remain in standings when crowded in-scene labels become compact.
 
@@ -58,4 +60,4 @@ Physical-device frame rate and speaker output still require device testing. Acco
 
 After every runner finishes, the 3D Winner Spotlight presents the winning character on a podium with a trophy, spotlight, confetti and a 12-second rotation. View Results opens the standings; Race Again starts a fresh race. Motion can be paused and respects reduced-motion preferences. See [Winner Spotlight notes](Docs/WINNER_SPOTLIGHT.md); browser coverage is in tests/browser-winner-spotlight.mjs.
 
-Bulk entry supports one name per line or a single Excel column: Enter adds all, Shift+Enter inserts a newline. All eligible employees participate; focused rendering never selects a subset of entrants. See [100-employee implementation](Docs/100_EMPLOYEES.md).
+Bulk entry supports one name per line or a single Excel column: Enter adds all, Shift+Enter inserts a newline. All eligible employees participate and remain in the 3D scene. See [100-employee implementation](Docs/100_EMPLOYEES.md).

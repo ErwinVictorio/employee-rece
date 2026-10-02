@@ -40,9 +40,9 @@ try {
     await sleep(300); assert.equal(await evaluate(`document.querySelector('.race-hud').textContent`), clock);
     assert.equal(await evaluate(`document.querySelectorAll('.broadcast-board li').length`), count);
     if (count > 12) {
-      await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focused lanes"]');s.value='${Math.floor((count - 1) / 12)}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-      await until(`document.querySelectorAll('.three-name').length === ${count % 12}`);
-      assert.equal(await evaluate(`document.querySelector('.prototype-stadium').dataset.environmentLanes`), '12');
+      await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focus lane"]');s.value='${count - 1}';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+      await until(`document.querySelectorAll('.three-name').length === ${count}`);
+      assert.equal(await evaluate(`document.querySelector('.prototype-stadium').dataset.environmentLanes`), String(count));
     }
     await evaluate(`document.querySelector('.prototype-stadium').scrollIntoView()`); await screenshot(`roster-${count}`);
     if (count === 100) {

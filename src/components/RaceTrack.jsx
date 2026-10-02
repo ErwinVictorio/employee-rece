@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import EventWelcome from './EventWelcome';
+import { isOpening } from '../utils/eventTimeline';
 import CompanyGroundsBanner from './CompanyGroundsBanner';
 import CompanyImageBanner from './CompanyImageBanner';
 import { locations, normalizeLocation } from '../data/locations';
@@ -17,8 +20,10 @@ export function RaceTrack({
     race,
     state,
     elapsed,
-    countdown
+    countdown,
+    markReady
   } = game;
+  useEffect(() => { if (race) markReady(race.id); }, [race, markReady]);
   const venue = normalizeLocation(race?.settings.location || location);
   const title = locations[venue].title;
   const positions = race ? race.runners.map(r => ({
@@ -37,7 +42,8 @@ export function RaceTrack({
   return <section className="track-card" aria-label={`${title} race track`} data-location={venue}><div className="track-toolbar"><div><span className={`status-dot ${live ? 'live' : ''}`} /><strong>{state === 'setup' ? 'TRACK PREVIEW' : `${title.toUpperCase()} LIVE`}</strong><span className="track-subtitle">{employees.length} racers · {title}</span></div><span className="timer">◷ {String(Math.ceil(Math.max(0, (race?.duration || duration) - elapsed))).padStart(2, '0')}<small> SEC</small></span></div>{venue === 'company-image' ? <CompanyImageBanner /> : venue === 'company-grounds' ? <CompanyGroundsBanner /> : <div className="stadium-banner" style={{
       backgroundImage: `linear-gradient(0deg, #111e39dd, #111e3910), url(${stadium})`
     }}><div><span className="eyebrow">EMPLOYEE RACE / STADIUM SERIES</span><h2 aria-live="polite">{labels[state]}</h2></div><img className="finish-gate" src={finish} alt="Finish" /></div>}
-    <div className="track-lanes"><div className="track-labels"><span>START</span><span>FINISH</span></div>{employees.map((employee, i) => {
+    <EventWelcome game={game} employees={employees} flat />
+    <div className="track-lanes" hidden={isOpening(state)}><div className="track-labels"><span>START</span><span>FINISH</span></div>{employees.map((employee, i) => {
         const runner = positions.find(r => r.employee.id === employee.id);
         const progress = runner?.progress || 0;
         const pose = runner ? sampleRunner(runner, elapsed).pose : 'running';
@@ -50,6 +56,6 @@ export function RaceTrack({
               }}><img className="runner-body" style={{ filter: characters[employee.character].filter }} src={characters[employee.character].image} alt={`${employee.name}'s runner`} />{employee.avatar && <img className="runner-photo" src={employee.avatar} alt="" />}</div>{progress >= 1 && <span className="finish-rank">{runner.rank + 1}</span>}</div></div></div>;
       })}{employees.length === 0 && <div className="empty-track">Add your team to fill the starting line.</div>}
     {state === 'countdown' && <div className="countdown-overlay"><span>GET READY</span><strong key={countdown}>{countdown}</strong><span>{employees.length} racers. One winner.</span></div>}</div>
-    <div className="track-bottom"><span>⚑ {state === 'setup' ? 'A fair start. An unpredictable finish.' : 'Live positions'}</span>{race && <ol className="live-leaders">{positions.slice(0, 3).map((r, i) => <li key={r.employee.id}><b>{i + 1}</b><Avatar employee={r.employee} />{r.employee.name}</li>)}</ol>}<span className="muted">{duration}-second dash</span></div>
+    <div className="track-bottom"><span>⚑ {state === 'setup' ? 'A fair start. An unpredictable finish.' : 'Live positions'}</span>{live && <ol className="live-leaders">{positions.slice(0, 3).map((r, i) => <li key={r.employee.id}><b>{i + 1}</b><Avatar employee={r.employee} />{r.employee.name}</li>)}</ol>}<span className="muted">{duration}-second dash</span></div>
   </section>;
 }

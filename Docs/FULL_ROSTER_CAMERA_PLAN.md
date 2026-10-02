@@ -1,6 +1,6 @@
 # Full roster visibility and rolling camera
 
-Status: proposed only. No game implementation changes in this planning pass.
+Status: implemented and locally verified on 2026-10-02. See [implementation and verification](FULL_ROSTER_CAMERA_IMPLEMENTATION.md) for checks, screenshots, measured performance, and device limitations.
 
 ## Goal
 

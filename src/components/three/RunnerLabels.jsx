@@ -1,48 +1,53 @@
+import { isOpening } from '../../utils/eventTimeline';
 import { useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Vector3 } from 'three';
 import { sampleRunner } from '../../utils/raceMotion';
+import { safeViewport } from '../../utils/courseLayout';
 
-export default function RunnerLabels({ employees, labels, connectors, game, labeled }) {
+export default function RunnerLabels({ employees, labels: labelsRef, connectors: connectorsRef, game, layout, regionRef, selectedLane }) {
   const point = useMemo(() => new Vector3(), []);
+  const runners = useMemo(() => new Map(game.race?.runners.map(r => [r.employee.id, r]) || []), [game.race]);
   useFrame(({ camera, size }) => {
-    const large = (game.race?.runners.length || employees.length) > 12;
-    const placed = size.width > 700 ? [{ left: 12, right: 274, top: 100, bottom: large ? 440 : Math.min(size.height - 65, 160 + employees.length * (employees.length > 8 ? 34 : 56)) }] : [{ left: 0, right: size.width, top: size.height - 65 - (large ? 125 : Math.ceil(employees.length / 3) * 29), bottom: size.height }];
-    employees.forEach((employee, lane) => {
-      const element = labels[lane].current;
-      if (!element) return;
-      const visible = !labeled || labeled.has(employee.id);
-      element.style.display = visible ? '' : 'none';
-      if (connectors[lane].current) connectors[lane].current.style.display = visible ? '' : 'none';
-      if (!visible) return;
-      const runner = game.race?.runners.find(r => r.employee.id === employee.id);
+    const close = regionRef.current.rolling;
+    // Batch style writes, then dimension reads, before positioning any labels.
+    // Interleaving these for 100 names forces a browser layout per runner.
+    labelsRef.forEach(ref => ref.current?.classList.toggle('overview-name', !close));
+    const sizes = labelsRef.map(ref => ({ width: ref.current?.offsetWidth || 0, height: ref.current?.offsetHeight || 0 }));
+    const placed = [];
+    const margins = safeViewport(size.width, size.height);
+    const order = employees.map((_, i) => i).sort((a, b) => Number(b === selectedLane) - Number(a === selectedLane));
+    for (const lane of order) {
+      const element = labelsRef[lane].current, connector = connectorsRef[lane].current;
+      if (!element) continue;
+      element.style.setProperty('visibility', 'hidden');
+      if (connector) connector.style.setProperty('display', 'none');
+      if (isOpening(game.state)) continue;
+      const runner = runners.get(employees[lane].id);
       const progress = runner ? sampleRunner(runner, game.animationTime.current).progress : 0;
-      point.set(-10 + progress * 20, 3.35, (lane - (employees.length - 1) / 2) * 3.2).project(camera);
-      const anchorX = (point.x * .5 + .5) * size.width, anchorY = (-point.y * .5 + .5) * size.height;
-      const width = element.offsetWidth, height = element.offsetHeight;
-      const desiredLeft = Math.max(8, Math.min(size.width - width - 8, anchorX - width * .75 - 12));
-      const desired = Math.max(100, anchorY - height - (size.width < 700 ? 18 : 30));
-      let top = desired, left = desiredLeft;
-      search: for (let ring = 0; ring <= employees.length; ring++) {
-        for (let dy = -ring; dy <= ring; dy++) for (let dx = -ring; dx <= ring; dx++) {
-          if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue;
-          const x = desiredLeft + dx * (width + 4), y = desired + dy * (height + 4);
-          if (x < 8 || y < 96 || x + width > size.width - 8 || y + height > size.height - 45) continue;
-          if (placed.some(p => x < p.right + 3 && x + width > p.left - 3 && y < p.bottom + 3 && y + height > p.top - 3)) continue;
-          left = x; top = y; break search;
-        }
+      point.set(-10 + progress * 20, 3.5, layout.zById.get(employees[lane].id)).project(camera);
+      if (Math.abs(point.x) > 1 || Math.abs(point.y) > 1 || Math.abs(point.z) > 1) continue;
+      const x = (point.x * .5 + .5) * size.width, y = (-point.y * .5 + .5) * size.height;
+      const { width, height } = sizes[lane];
+      const left = x - width / 2;
+      let top = y - height - 8, found = false;
+      for (let offset = 0; offset < 4; offset++) {
+        top = y - height - 8 - offset * (height + 3);
+        if (left < margins.left || left + width > size.width - margins.right || top < margins.top || top + height > size.height - margins.bottom) continue;
+        if (placed.some(p => left < p.right + 3 && left + width > p.left - 3 && top < p.bottom + 3 && top + height > p.top - 3)) continue;
+        found = true; break;
       }
-      element.style.transform = `translate(${left}px, ${top}px)`;
-      element.style.visibility = 'visible';
+      if (!found) continue;
+      element.style.setProperty('transform', `translate(${left}px, ${top}px)`);
+      element.style.setProperty('visibility', 'visible');
       placed.push({ left, right: left + width, top, bottom: top + height });
-      const connector = connectors[lane].current;
       if (connector) {
-        const x = left + width * .7, y = top + height;
-        connector.children[0].setAttribute('d', `M${x},${y} L${(x + anchorX) / 2},${y} L${anchorX},${anchorY}`);
-        connector.children[1].setAttribute('cx', anchorX);
-        connector.children[1].setAttribute('cy', anchorY);
+        connector.style.removeProperty('display');
+        connector.children[0].setAttribute('d', `M${x},${top + height} L${x},${y}`);
+        connector.children[1].setAttribute('cx', x);
+        connector.children[1].setAttribute('cy', y);
       }
-    });
+    }
   });
   return null;
 }

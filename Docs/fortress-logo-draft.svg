@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="260" viewBox="0 0 1000 260" role="img" aria-labelledby="title desc">
+  <title id="title">Fortress Steel Inc. — recreated logo draft</title>
+  <desc id="desc">Blue fortress tower and company lettering on a transparent background. Recreated from the event reference for review; not an official master. Lettering uses live text.</desc>
+  <g fill="#173B8F">
+    <!-- Two crenellated crown faces separated by a transparent center seam. -->
+    <path d="M30 71 L30 44 L48 37 L48 53 L64 47 L64 29 L83 22 L83 40 L100 34 L100 15 L119 8 L119 49 Z"/>
+    <path d="M123 8 L142 15 L142 34 L159 40 L159 22 L178 29 L178 47 L194 53 L194 37 L212 44 L212 71 L123 49 Z"/>
+    <!-- Tapered tower faces and separated foundation. -->
+    <path d="M40 79 L119 56 L119 181 L31 153 Z"/>
+    <path d="M123 56 L202 79 L211 153 L123 181 Z"/>
+    <path d="M27 162 L119 190 L119 214 L23 181 Z"/>
+    <path d="M123 190 L215 162 L219 181 L123 214 Z"/>
+    <text x="254" y="137" font-family="Arial, Helvetica, sans-serif" font-size="98" font-weight="700" textLength="715" lengthAdjust="spacingAndGlyphs">FORTRESS</text>
+    <text x="316" y="188" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" letter-spacing="12">STEEL INC.</text>
+  </g>
+</svg>

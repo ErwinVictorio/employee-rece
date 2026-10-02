@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRace } from '../utils/race';
+import { advanceEventClock, eventPhase, EVENT_BOUNDARIES } from '../utils/eventTimeline';
 export function useRace(onWinner) {
   const [race, setRace] = useState(null);
   const preparation = useRef(null);
@@ -7,7 +8,9 @@ export function useRace(onWinner) {
   const [preparing, setPreparing] = useState(false);
   useEffect(() => () => { preparation.current?.cancel(); }, []);
   const [clock, setClock] = useState(0);
-  const started = useRef(0);
+  const ready = useRef(null);
+  const starting = useRef(false);
+  const markReady = useCallback(id => { ready.current = id; }, []);
   const animationTime = useRef(0);
   const logicalClock = useRef(0);
   const synchronizeClock = useCallback(() => setClock(logicalClock.current), []);
@@ -21,34 +24,36 @@ export function useRace(onWinner) {
   }, []);
   const resume = useCallback(() => {
     if (pausedAt.current === null) return;
-    started.current += performance.now() - pausedAt.current;
     pausedAt.current = null;
     setPaused(false);
   }, []);
   useEffect(() => {
-    const hidden = () => { if (document.hidden && race && logicalClock.current < race.duration + 4.8) pause(); };
+    const hidden = () => { if (document.hidden && race && logicalClock.current < race.duration + EVENT_BOUNDARIES.racing + .8) pause(); };
     document.addEventListener('visibilitychange', hidden);
     return () => document.removeEventListener('visibilitychange', hidden);
   }, [race, pause]);
   useEffect(() => {
     if (!race || paused) return;
     let frame;
+    let previous = performance.now();
     let lastUpdate = -Infinity;
     const tick = now => {
-      const seconds = (now - started.current) / 1000;
+      const seconds = advanceEventClock(logicalClock.current, (now - previous) / 1000, ready.current === race.id, pausedAt.current !== null || document.hidden);
+      previous = now;
       logicalClock.current = seconds;
-      animationTime.current = Math.max(0, seconds - 4);
-      if (now - lastUpdate >= 50 || seconds >= race.duration + 4.8) {
+      animationTime.current = eventPhase(seconds).elapsed;
+      if (now - lastUpdate >= 50 || seconds >= race.duration + EVENT_BOUNDARIES.racing + .8) {
         setClock(seconds);
         lastUpdate = now;
       }
-      if (seconds < race.duration + 4.8) frame = requestAnimationFrame(tick);
+      if (seconds < race.duration + EVENT_BOUNDARIES.racing + .8) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [race, paused]);
-  const elapsed = Math.max(0, clock - 4);
-  const state = !race ? 'setup' : clock < 4 ? 'countdown' : elapsed >= race.duration + 0.8 ? 'results' : elapsed >= race.runners[0].finishTime ? 'finished' : elapsed >= race.finalStretchAt ? 'finalStretch' : 'racing';
+  const phase = eventPhase(clock);
+  const elapsed = phase.elapsed;
+  const state = !race ? 'setup' : clock < EVENT_BOUNDARIES.racing ? phase.state : elapsed >= race.duration + 0.8 ? 'results' : elapsed >= race.runners[0].finishTime ? 'finished' : elapsed >= race.finalStretchAt ? 'finalStretch' : 'racing';
   const recordedRace = useRef(null);
   useEffect(() => {
     if ((state === 'finished' || state === 'results') && recordedRace.current !== race.id) {
@@ -58,14 +63,19 @@ export function useRace(onWinner) {
   }, [state, race, onWinner]);
   return {
     race,
+    markReady,
+    phaseTime: phase.phaseTime,
+    welcomeRemaining: phase.welcomeRemaining,
     animationTime,
     synchronizeClock,
     paused, pause, resume,
     elapsed,
     state,
     preparing,
-    countdown: clock < 3 ? 3 - Math.floor(clock) : 'GO!',
+    countdown: phase.countdown,
     async start(employees, duration, settings, random) {
+      if (starting.current) return;
+      starting.current = true;
       const version = ++generation.current;
       preparation.current?.cancel();
       setPreparing(true);
@@ -79,7 +89,7 @@ export function useRace(onWinner) {
           worker.onerror = () => { finish(); reject(new Error('Race preparation failed. Please try again.')); };
           worker.postMessage({ employees, duration, settings });
         });
-      } finally { if (version === generation.current) setPreparing(false); }
+      } finally { if (version === generation.current) { setPreparing(false); starting.current = false; } }
       if (!next || version !== generation.current) return;
       // Structured cloning from the worker does not preserve Object.freeze.
       next.order.forEach(Object.freeze);
@@ -91,7 +101,7 @@ export function useRace(onWinner) {
       Object.freeze(next.order); Object.freeze(next.runners); Object.freeze(next.settings); Object.freeze(next);
       pausedAt.current = null;
       setPaused(false);
-      started.current = performance.now();
+      ready.current = null;
       setClock(0);
       logicalClock.current = 0;
       animationTime.current = 0;
@@ -99,6 +109,8 @@ export function useRace(onWinner) {
     },
     reset() {
       generation.current++;
+      starting.current = false;
+      ready.current = null;
       preparation.current?.cancel();
       setPreparing(false);
       pausedAt.current = null;

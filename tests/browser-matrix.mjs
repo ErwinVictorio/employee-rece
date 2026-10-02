@@ -57,14 +57,14 @@ try {
     await until(`!!document.querySelector('.three-countdown')`);
     await sleep(4500);
     await screenshot(`matrix-${count}-desktop`);
-    await click('Trackside view');
+    await click('Rolling camera');
     await screenshot(`matrix-${count}-side`);
     await send('Emulation.setDeviceMetricsOverride', { width: 768, height: 1024, deviceScaleFactor: 1, mobile: true });
     await sleep(400); await screenshot(`matrix-${count}-tablet`);
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await sleep(400); await screenshot(`matrix-${count}-mobile`);
     assert.ok(await evaluate(`document.documentElement.scrollWidth <= innerWidth`));
-    assert.ok(await evaluate(`(() => { const labels = Array.from(document.querySelectorAll('.three-name')).map(e => e.getBoundingClientRect()); return labels.every((a,i) => labels.every((b,j) => i===j || a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom)); })()`), 'In-scene labels do not overlap');
+    assert.ok(await evaluate(`(() => { const labels = Array.from(document.querySelectorAll('.three-name')).filter(e => getComputedStyle(e).visibility === 'visible').map(e => e.getBoundingClientRect()); return labels.every((a,i) => labels.every((b,j) => i===j || a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom)); })()`), 'In-scene labels do not overlap');
     measurements.push({ count, fps: await evaluate(`document.querySelector('.three-viewport').dataset.fps`) });
     await until(`!!document.querySelector('.results-panel')`);
     await click('View Results');

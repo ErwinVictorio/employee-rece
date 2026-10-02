@@ -32,11 +32,18 @@ export function useGameAudio(state, effects, ambience, game = {}) {
     const active = ['racing', 'finalStretch', 'finished'].includes(state);
     for (const [key, sound] of Object.entries(bank.current || {})) {
       const oneShot = key === 'countdown' || key === 'success';
-      const wanted = key === 'countdown' ? state === 'countdown' : key === 'success' ? state === 'results' : active;
+      const wanted = key === 'countdown' ? state === 'countdown' : key === 'success' ? state === 'results' : key === 'crowd' ? active || state === 'welcome' : active;
       const enabled = key === 'crowd' ? ambience : effects;
       const id = `${race?.id}:${key}`;
+      const playback = `${id}:playing`;
+      if (!wanted || !enabled || paused) cues.current.delete(playback);
       if (oneShot) {
-        if (wanted && !cues.current.has(id)) {
+        if (key === 'countdown' && wanted && enabled && !paused && !cues.current.has(playback)) {
+          cues.current.add(playback);
+          cues.current.add(id);
+          sound.currentTime = Math.min(game.phaseTime || 0, Number.isFinite(sound.duration) ? Math.max(0, sound.duration - .01) : 4);
+          sound.play().catch(() => {});
+        } else if (wanted && !cues.current.has(id)) {
           cues.current.add(id);
           if (enabled && !paused) sound.play().catch(() => {});
         }
@@ -51,7 +58,7 @@ export function useGameAudio(state, effects, ambience, game = {}) {
       synth.current?.suspend().catch(() => {});
     }
     else synth.current?.resume().catch(() => {});
-  }, [state, effects, ambience, paused, race?.id]);
+  }, [state, effects, ambience, paused, race?.id, game.phaseTime]);
   useEffect(() => {
     const last = previous.current.elapsed;
     for (const runner of race?.runners || []) for (const event of runner.events) {

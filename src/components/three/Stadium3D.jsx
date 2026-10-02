@@ -58,9 +58,9 @@ export function SceneLifecycle({ onReady, onLost, onPerformance }) {
 export default function Stadium3D({ laneCount = 2, game, reducedMotion, low }) {
   return <>
     <color attach="background" args={['#80b5a0']} />
-    <fog attach="fog" args={['#b8d9c6', 110, 250]} />
+    <fog attach="fog" args={['#b8d9c6', 2000, 9000]} />
     <hemisphereLight args={['#fff2dc', '#668272', 2.2]} />
-    <directionalLight position={[-8, 18, 9]} intensity={2.4} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-left={-18} shadow-camera-right={18} shadow-camera-top={12} shadow-camera-bottom={-12} shadow-normalBias={0.04} />
+    <directionalLight position={[-8, Math.max(25, laneCount * 3.2), 9]} intensity={2.4} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-left={-laneCount * 1.6 - 20} shadow-camera-right={laneCount * 1.6 + 20} shadow-camera-top={laneCount * 1.6 + 20} shadow-camera-bottom={-laneCount * 1.6 - 20} shadow-camera-far={1000} shadow-normalBias={0.04} />
     <Block position={[0, -0.3, 0]} size={[130, 0.45, laneCount * 3.2 + 90]} color="#67a680" receiveShadow />
     <Block position={[0, -0.06, 0]} size={[27, 0.15, laneCount * 3.2 + 0.6]} color="#cb705b" receiveShadow />
     {Array.from({ length: laneCount + 1 }, (_, i) => (i - laneCount / 2) * 3.2).map(z => <Block key={z} position={[0, 0.03, z]} size={[27, 0.02, 0.055]} color="#fff4df" />)}

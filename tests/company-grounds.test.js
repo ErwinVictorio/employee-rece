@@ -24,10 +24,10 @@ test('both venues have identical race plans and motion at every roster and durat
     for (let i = 0; i <= 40; i++) company.runners.forEach((runner, r) => assert.equal(progressAt(runner, i * duration / 40), progressAt(stadium.runners[r], i * duration / 40)));
   }
 });
-test('environment capacity uses the full roster, bounded to twelve, independent of focused group', () => {
+test('environment capacity uses the full roster, up to one hundred', () => {
   assert.equal(environmentLaneCapacity(0), 2);
   assert.equal(environmentLaneCapacity(6), 6);
-  for (const count of [12, 13, 100]) assert.equal(environmentLaneCapacity(count), 12);
+  for (const count of [12, 13, 100]) assert.equal(environmentLaneCapacity(count), count);
 });
 
 test('venue cameras fit runners and finish stripe on desktop, tablet and mobile', () => {

@@ -1,0 +1,46 @@
+.event-welcome { position:absolute; z-index:6; inset:14px 18px auto; pointer-events:none; display:flex; justify-content:space-between; gap:12px; color:#fff; }
+.event-identity,.event-message { background:#102953ed; border:1px solid #75baff; border-radius:12px; padding:12px 18px; box-shadow:0 8px 24px #07192b33; }
+.event-identity { display:flex; align-items:center; gap:16px; align-self:flex-start; }
+.event-identity img { width:160px; background:#fff; border-radius:5px; padding:6px; }
+.event-identity strong { text-transform:uppercase; letter-spacing:.08em; }
+.event-message { display:grid; text-align:center; gap:4px; min-width:230px; }
+.event-message strong { font-size:clamp(24px,4vw,44px); color:#82c7ff; line-height:1.1; font-variant-numeric:tabular-nums; }
+.event-message small { color:#c7dcf4; }
+.event-flat { position:relative; inset:auto; padding:24px; flex-wrap:wrap; background:linear-gradient(135deg,#173b8f,#071b3d); }
+.event-roster { list-style:none; width:100%; display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; padding:0; max-height:320px; overflow:auto; pointer-events:auto; }
+.event-roster li { background:#ffffff12; border-radius:6px; padding:8px; overflow-wrap:anywhere; }
+.event-roster b { color:#82c7ff; }
+.event-opening .broadcast-title,.event-opening .broadcast-timer,.event-opening .broadcast-caption { display:none; }
+.event-opening .broadcast-board { top:135px; }
+@media(max-width:700px) { .event-welcome { inset:8px 8px auto; gap:6px; } .event-identity { padding:8px; display:grid; gap:4px; max-width:45%; font-size:10px; } .event-identity img { width:100%; max-width:130px; } .event-message { padding:8px; min-width:0; font-size:11px; } .event-flat { inset:auto; } }
+
+.event-opening .event-welcome { inset:0; display:block; }
+.event-opening .event-identity { position:absolute; top:18px; left:20px; width:230px; padding:10px 12px; display:grid; gap:6px; font-size:10px; letter-spacing:.12em; background:linear-gradient(140deg,#16385bed,#081c37f5); border-color:#659fd566; }
+.event-opening .event-identity img { width:145px; }
+.event-opening .event-message { position:absolute; right:18px; top:18px; width:224px; min-width:0; padding:22px 16px; border-color:#6aa9e6a6; border-radius:16px; background:linear-gradient(145deg,#112c50f5,#061931f5); text-align:left; }
+.event-message h2 { margin:0; font-size:20px; color:#f4f7ff; line-height:1.25; }
+.event-message p { margin:7px 0 22px; padding-bottom:18px; border-bottom:1px solid #7caff12b; color:#adc5e3; font-size:11px; }
+.event-message>span { color:#acd5ff; text-transform:uppercase; letter-spacing:.12em; font-size:10px; font-weight:800; }
+.event-opening .event-message strong { font-size:48px; margin:6px 0 18px; }
+.event-opening .event-message small { color:#84c5ff; font-size:11px; }
+.event-opening .broadcast-board { top:120px; left:20px; width:230px; max-height:calc(100% - 230px); border-radius:14px; }
+.ceremony-progress { position:absolute; left:18px; right:18px; bottom:14px; min-height:77px; display:flex; align-items:center; gap:30px; padding:12px 22px; border:1px solid #649bd6a6; border-radius:14px; background:linear-gradient(115deg,#102b4ff5,#152642f2); box-shadow:0 8px 30px #020a1a66; }
+.ceremony-note { min-width:235px; display:grid; gap:4px; }
+.ceremony-note>span { font-size:9px; letter-spacing:.16em; color:#78c5ff; }
+.ceremony-note strong { font-size:18px; }.ceremony-note small { font-size:10px; color:#afc6e2; }
+.ceremony-progress ol { flex:1; display:flex; list-style:none; padding:0; margin:0; }
+.ceremony-progress li { flex:1; display:grid; justify-items:center; gap:8px; position:relative; color:#9cb1cf; font-size:10px; }
+.ceremony-progress li:not(:last-child)::after { content:''; position:absolute; height:2px; background:#466180; top:7px; left:55%; width:90%; }
+.ceremony-progress i { width:15px; height:15px; border-radius:50%; background:#6d89a9; border:4px solid #203551; outline:1px solid #5f7ea4; z-index:1; }
+.ceremony-progress .current { color:white; }.ceremony-progress .current i { background:white; border-color:#119ff1; outline:4px solid #119ff144; }.ceremony-progress .complete i { background:#71caff; }
+@media(max-width:1000px) {
+  .event-opening .event-identity { top:10px; left:10px; width:40%; max-width:220px; padding:8px; font-size:9px; }
+  .event-opening .event-identity img { width:130px; }
+  .event-opening .event-message { top:10px; right:10px; padding:10px; width:48%; max-width:260px; }
+  .event-message h2 { font-size:14px; }.event-message p { display:none; }.event-opening .event-message strong { font-size:30px; margin:3px 0; }.event-message>span { font-size:8px; letter-spacing:.04em; }.event-opening .event-message small { font-size:9px; }
+  .event-opening .broadcast-board { top:auto; bottom:65px; left:10px; right:10px; width:auto; max-height:115px; padding:6px 10px; }
+  .event-opening .broadcast-board ol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0 8px; }
+  .event-opening .broadcast-board li { min-height:27px; padding:4px 0 4px 6px; gap:4px; }.event-opening .broadcast-board li>b { font-size:11px; width:12px; }.event-opening .broadcast-board li>span:last-of-type { font-size:10px; }.event-opening .broadcast-board .racer-portrait,.event-opening .broadcast-board li small,.event-opening .broadcast-board-heading { display:none; }
+  .ceremony-progress { bottom:8px; left:10px; right:10px; min-height:46px; padding:8px; }.ceremony-note { display:none; }.ceremony-progress li { font-size:8px; gap:5px; }
+  .race-active .event-opening .three-viewport { height:max(600px, calc(100dvh - 180px)); }
+}

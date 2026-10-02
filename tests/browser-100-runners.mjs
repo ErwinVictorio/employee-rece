@@ -44,7 +44,7 @@ try {
  await mkdir('artifacts',{recursive:true});await send('Runtime.enable');await send('Runtime.discardConsoleEntries');errors.length=0;await send('Page.enable');
  injection=await send('Page.addScriptToEvaluateOnNewDocument',{source:`const now=performance.now.bind(performance),base=now(),scale=t=>base+(t-base)*3;performance.now=()=>scale(now());const raf=requestAnimationFrame;window.requestAnimationFrame=cb=>raf(t=>cb(scale(t)));`});
  await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1080,deviceScaleFactor:1,mobile:false});
- await send('Page.navigate',{url:'http://127.0.0.1:5173'});
+ await send('Page.navigate',{url:process.env.COMPANY_TEST_URL || 'http://127.0.0.1:5175'});
  await until(`document.querySelector('.three-viewport')?.dataset.ready==='true'`);
  await evaluate(`(()=>{const e=document.querySelector('#bulk-names');Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(e,Array.from({length:94},(_,i)=>'Employee '+(i+7)).join(String.fromCharCode(10)));e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  await evaluate(`document.querySelector('#bulk-names').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}))`);
@@ -57,18 +57,18 @@ try {
  await until(`!!document.querySelector('.three-countdown')`);
  await evaluate(`Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));`);
  assert.equal(await evaluate(`document.querySelectorAll('.broadcast-board li').length`),100);
- assert.ok(await evaluate(`document.querySelectorAll('.three-name').length<=12`));
- await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focused lanes"]');s.value='8';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
- await until(`document.querySelectorAll('.three-name').length===4`);
+ assert.ok(await evaluate(`document.querySelectorAll('.three-name').length===100`));
+ await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focus lane"]');s.value='99';s.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+ await until(`document.querySelectorAll('.three-name').length===100`);
  await screenshot('100-runners-desktop');
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(300);
  assert.ok(await evaluate(`document.documentElement.scrollWidth<=innerWidth`));
  assert.ok(await evaluate(`(()=>{const e=document.querySelector('.broadcast-board');return e.scrollHeight>e.clientHeight})()`));
  await screenshot('100-runners-mobile');
- await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focused lanes"]');s.value='auto';s.dispatchEvent(new Event('change',{bubbles:true}));delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));})()`);
+ await evaluate(`(()=>{const s=document.querySelector('[aria-label="Focus lane"]');s.value='';s.dispatchEvent(new Event('change',{bubbles:true}));delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));})()`);
  await click('Resume race');
  await sleep(1800);
- assert.ok(await evaluate(`Array.from(document.querySelectorAll('.three-name')).filter(e=>getComputedStyle(e).display!=='none').length<=6`));
+ assert.ok(await evaluate(`document.querySelectorAll('.full-field-locator circle').length===100`));
  await screenshot('100-runners-live-mobile');
  await until(`!!document.querySelector('.results-panel')`,60000);
  await click('View Results');
@@ -79,5 +79,5 @@ try {
  await until(`!!document.querySelector('.three-countdown')`);
  assert.equal(await evaluate(`document.querySelectorAll('.broadcast-board li').length`),99);
  await click('Use 2D');assert.equal(await evaluate(`document.querySelectorAll('.race-lane').length`),99);
- assert.deepEqual(errors,[]);console.log('PASS 100 bulk entrants, overflow, worker, focused lanes, mobile scroll, all results/times, exclusion replay and 2D.');
+ assert.deepEqual(errors,[]);console.log('PASS 100 bulk entrants, overflow, worker, full roster and manual focus, mobile scroll, all results/times, exclusion replay and 2D.');
 } finally {if(injection)await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:injection.identifier});ws.close();}

@@ -9,7 +9,7 @@ export function normalizeLocation(id) {
 }
 
 export function environmentLaneCapacity(count) {
-  return Math.max(2, Math.min(12, count));
+  return Math.max(2, Math.min(100, count));
 }
 
 // Artistic proportions, adjustable together; the unseen rear remains plain.

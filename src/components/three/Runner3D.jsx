@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { BoxGeometry, MeshStandardMaterial, SphereGeometry, Vector3 } from 'three';
 import { sampleRunner } from '../../utils/raceMotion';
+import { laneZ } from '../../utils/courseLayout';
+import { runnerEventPosition } from '../../utils/eventLayout';
+import { useBrandTexture } from '../../hooks/useBrandTexture';
 import { groundedBodyY } from '../../utils/runnerGrounding';
 
 const Resources = createContext(null);
@@ -27,7 +30,8 @@ function Part({ position, scale, color, round = false }) {
 }
 
 // Original articulated mesh: shared design, independently animated joints per employee.
-export default function Runner3D({ employee, lane = 0, laneCount = 2, color, race, elapsed = 0, animationTime, labelRef, reducedMotion, showcase = false }) {
+export default function Runner3D({ game, event, employee, lane = 0, laneCount = 2, layout, color, race, elapsed = 0, animationTime, labelRef, reducedMotion, showcase = false }) {
+  const logo = useBrandTexture();
   const root = useRef();
   const body = useRef();
   const leftArm = useRef();
@@ -47,8 +51,12 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
     const running = runner && time > 0 && time < runner.finishTime;
     const phase = time * 12 + lane * Math.PI;
     const prone = ['falling', 'fallen', 'recovering'].includes(pose);
-    const swing = running && !reducedMotion && !prone ? Math.sin(phase) : 0;
-    root.current.position.set(showcase ? 0 : -10 + progress * 20, 0.08, showcase ? 0 : (lane - (laneCount - 1) / 2) * 3.2);
+    const walking = game && ['arrival', 'lineup'].includes(game.state);
+    const swing = !reducedMotion && walking ? Math.sin(game.phaseTime * 9 + lane) * .45 : running && !reducedMotion && !prone ? Math.sin(phase) : 0;
+    root.current.position.set(showcase ? 0 : -10 + progress * 20, 0.08, showcase ? 0 : (layout?.zById.get(employee.id) ?? laneZ(lane, laneCount)));
+    const opening = game && event && runnerEventPosition(game, lane, layout.zById.get(employee.id), event, reducedMotion);
+    if (opening) root.current.position.set(opening.x, .08, opening.z);
+    root.current.rotation.y = opening?.rotation || 0;
     body.current.position.y = 0;
     const blend = x => x * x * (3 - 2 * x);
     const lean = pose === 'stumbling' ? 0.25 * blend(t) : pose === 'falling' ? 0.25 + 1.15 * blend(t) : pose === 'fallen' ? 1.4 : pose === 'recovering' ? 1.4 * (1 - blend(t)) : 0;
@@ -57,6 +65,10 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
     if (prone && !reducedMotion) body.current.position.y = 0.75 * Math.sin(lean);
     leftArm.current.rotation.x = swing * 0.8;
     rightArm.current.rotation.x = -swing * 0.8;
+    if (game?.state === 'welcome' && !reducedMotion) {
+      leftArm.current.rotation.x = Math.sin(game.phaseTime * 1.5 + lane) * .04;
+      rightArm.current.rotation.x = -leftArm.current.rotation.x;
+    }
     leftArm.current.rotation.z = showcase === 'winner' ? -2.25 : showcase ? -.65 : 0;
     rightArm.current.rotation.z = showcase === 'winner' ? 2.25 : showcase ? .65 : 0;
     if (showcase === 'cheer') {
@@ -134,6 +146,7 @@ export default function Runner3D({ employee, lane = 0, laneCount = 2, color, rac
         </group>
       </group>)}
       <Part position={[0, 2.51, .395]} scale={[.14, .036, .038]} color="#382619" round />
+      {[-1, 1].map(side => <mesh key={`badge-${side}`} position={[0, 1.93, side * .48]} rotation={[0, side === 1 ? 0 : Math.PI, 0]}><planeGeometry args={[.62, .1612]} /><meshBasicMaterial map={logo} transparent depthWrite={false} /></mesh>)}
       <Part position={[0, 1.93, 0.45]} scale={[0.38, 0.28, 0.04]} color="#ffffff" />
     </group></group>
   </group>;
