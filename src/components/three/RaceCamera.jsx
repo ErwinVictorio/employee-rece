@@ -44,7 +44,10 @@ export default function RaceCamera({ game, event, layout, view, finishCam, reduc
     const elapsed = game.animationTime.current;
     const active = !!game.race && !isPreRace(game.state) && view !== 'overview' && !reducedMotion;
     const finishBlend = finishCam ? smooth((elapsed - game.race.finalStretchAt) / 1.5) : 0;
-    const rollingBlend = active ? smooth(elapsed / 1.5) * (1 - finishBlend) : 0;
+    // A two-second overview every twelve seconds reconnects the tracking shot to the full field.
+    const shotTime = elapsed % 12;
+    const wideBeat = cinematic ? smooth((shotTime - 8) / 1.2) * (1 - smooth((shotTime - 10) / 2)) : 0;
+    const rollingBlend = active ? smooth(elapsed / 1.5) * (1 - finishBlend) * (1 - wideBeat) : 0;
     const window = rollingWindow(layout.laneCount, size.width, elapsed, game.race?.finalStretchAt || 1, manualLane);
     const positions = game.race ? game.race.runners.map(r => -10 + 20 * progressAt(r, elapsed)) : [];
     poses.offset.set(fieldCenter(positions), 0, window.z);

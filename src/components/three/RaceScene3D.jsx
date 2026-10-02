@@ -40,7 +40,7 @@ function EventReady({ game }) {
   return null;
 }
 
-export default function RaceScene3D({ location = 'stadium', employees: allEmployees, game, cinematic = false, onBlocked, onAgain, onViewResults }) {
+export default function RaceScene3D({ location = 'stadium', employees: allEmployees, game, cinematic = false, showAllNames = false, onBlocked, onAgain, onViewResults }) {
   const venue = normalizeLocation(game.race?.settings.location || location);
   const layout = useMemo(() => courseLayout(allEmployees), [allEmployees]);
   const capacity = layout.laneCount;
@@ -52,7 +52,7 @@ export default function RaceScene3D({ location = 'stadium', employees: allEmploy
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const celebrating = game.state === 'results' && !cinematic;
+  const celebrating = game.state === 'results';
   const [pausedCelebration, setPausedCelebration] = useState(null);
   const celebrationPaused = game.paused || pausedCelebration === game.race?.id;
   const [viewChoice, setViewChoice] = useState(null);
@@ -85,7 +85,7 @@ export default function RaceScene3D({ location = 'stadium', employees: allEmploy
         <RaceCamera cinematic={cinematic} event={event} location={venue} game={game} laneCount={capacity} layout={layout} view={view} finishCam={finishCam} reducedMotion={reduced} manualLane={manualLane} regionRef={regionRef} />
 
         {employees.length > 12 ? <FullRosterRunners event={event} employees={employees} layout={layout} game={game} reducedMotion={reduced} low={low} /> : <RunnerResources>{employees.map((employee, lane) => <Runner3D game={game} event={event} key={employee.id} employee={employee} lane={lane} laneCount={capacity} layout={layout} color={characters[employee.character].color} race={game.race} elapsed={game.elapsed} animationTime={game.animationTime} labelRef={labels[lane]} reducedMotion={reduced} />)}</RunnerResources>}
-        <RunnerLabels cinematic={cinematic} employees={employees} labels={labels} connectors={connectors} game={game} layout={layout} regionRef={regionRef} selectedLane={manualLane} /></>}
+        <RunnerLabels cinematic={cinematic} showAllNames={showAllNames} employees={employees} labels={labels} connectors={connectors} game={game} layout={layout} regionRef={regionRef} selectedLane={manualLane} /></>}
         <SceneLifecycle onReady={onReady} onLost={onLost} onPerformance={setFps} /></Suspense>
       </Canvas></SceneBoundary>}
       {!failed && !celebrating && <><svg className="runner-connectors" aria-hidden="true">{employees.map((e, i) => <g key={e.id} ref={connectors[i]} stroke={characters[e.character].color}><path fill="none" strokeWidth="2.5" /><circle r="4" fill={characters[e.character].color} stroke="white" strokeWidth="1.5" /></g>)}</svg><div className="three-labels" aria-hidden="true">{employees.map((e, i) => <div className={`three-name ${employees.length > 6 ? 'compact-name' : ''}`} style={{ '--team-color': characters[e.character].color }} ref={labels[i]} key={e.id} title={e.name}><RacerPortrait employee={e} /><b>{i + 1}</b><span className="label-name">{e.name}</span></div>)}</div>{!cinematic && <RaceBroadcast location={venue} finishCam={finishCam} employees={allEmployees} game={game} onFocus={focusLane} />}</>}

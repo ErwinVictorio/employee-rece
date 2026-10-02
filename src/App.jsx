@@ -27,6 +27,7 @@ export default function App() {
   const previousFocus = useRef(null);
   const scrollPosition = useRef(0);
   const [cinematic, setCinematic] = useState(false);
+  const [showAllNames, setShowAllNames] = useState(false);
   useEffect(() => {
     const changed = () => {
       const active = document.fullscreenElement === presentation.current;
@@ -85,7 +86,8 @@ export default function App() {
       pendingStart.current = false;
     }
   }
-  function viewResults() {
+  async function viewResults() {
+    if (document.fullscreenElement === presentation.current) await document.exitFullscreen();
     setResultsOpen(true);
     requestAnimationFrame(() => document.querySelector('#race-results .results-table h3')?.focus());
   }
@@ -125,7 +127,7 @@ export default function App() {
       </section>}
       {isSetup && <div className="setup-grid"><ParticipantsPanel disabled={game.preparing} employees={employees} excludedIds={excludeWinners ? winnerIds : []} onChange={setEmployees} /><section className="panel settings"><fieldset disabled={game.preparing} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}><div className="section-heading"><h2><span className="step">02</span> Set the race</h2><span className="muted">Make it yours</span></div><DurationSettings duration={duration} onChange={setDuration} custom={customDuration} onCustomChange={setCustomDuration} minutes={minutes} onMinutesChange={setMinutes} /><LocationSettings value={venue} onChange={setVenue} disabled={game.preparing} /><label className="toggle-row"><span>Sound effects<small>Countdown, footsteps & victory</small></span><input type="checkbox" checked={effects} onChange={e => setEffects(e.target.checked)} /></label><label className="toggle-row"><span>Crowd ambience<small>Bring the crowd to life</small></span><input type="checkbox" checked={ambience} onChange={e => setAmbience(e.target.checked)} /></label><label className="toggle-row"><span>Fun moments<small>Runners can trip, recover, and still win.</small></span><input type="checkbox" checked={funMoments} onChange={e => setFunMoments(e.target.checked)} /></label><button className="primary start-button" disabled={game.preparing || invalidDuration || eligible.length < 2 || rendererBlocked} onClick={start}>Start Event <span>→</span></button><p className="fairness">{eligible.length < 2 ? 'Add at least 2 eligible employees to start.' : 'Everyone has a chance. The order is randomized at the start.'}</p></fieldset></section></div>}
       <AnnouncerControls announcer={announcer} setup={isSetup && !game.preparing} />
-      <div className="race-presentation" ref={presentation}>{announcer.caption && <div className="announcer-caption" role="status">{announcer.caption}</div>}{cinematic && <CinematicBroadcast announcer={announcer} game={game} employees={racers} blocked={rendererBlocked} onExit={fullscreen} exitRef={exitButton} />}<RendererBoundary onError={() => { setRendererBlocked(true); game.pause(); }}><Suspense fallback={<div className="panel" role="status">Loading 3D venue…</div>}><RaceScene3D cinematic={cinematic} location={venue} onAgain={!game.preparing && eligible.length >= 2 ? start : undefined} onViewResults={viewResults} onBlocked={setRendererBlocked} employees={racers} game={game} /></Suspense></RendererBoundary></div>
+      <div className="race-presentation" ref={presentation}>{announcer.caption && <div className="announcer-caption" role="status">{announcer.caption}</div>}{cinematic && <CinematicBroadcast showAllNames={showAllNames} onToggleNames={() => setShowAllNames(value => !value)} announcer={announcer} game={game} employees={racers} blocked={rendererBlocked} onExit={fullscreen} exitRef={exitButton} />}<RendererBoundary onError={() => { setRendererBlocked(true); game.pause(); }}><Suspense fallback={<div className="panel" role="status">Loading 3D venue…</div>}><RaceScene3D showAllNames={showAllNames} cinematic={cinematic} location={venue} onAgain={!game.preparing && eligible.length >= 2 ? start : undefined} onViewResults={viewResults} onBlocked={setRendererBlocked} employees={racers} game={game} /></Suspense></RendererBoundary></div>
       {game.state !== 'results' && <RaceHUD canResume={!rendererBlocked} employees={racers} game={game} duration={game.race?.duration || duration} />}
       {game.state === 'results' && <Results expanded={resultsOpen} onExpandedChange={setResultsOpen} compact focusOnMount={false} race={game.race} onAgain={!game.preparing && eligible.length >= 2 ? start : undefined} onEdit={game.reset} onNew={() => setConfirmation('new')} />}
       {!isSetup && game.state !== 'results' && <div className="race-footer"><span>Results are locked. The excitement is just getting started.</span><button className="quiet" onClick={() => setConfirmation('reset')}>Stop race</button></div>}

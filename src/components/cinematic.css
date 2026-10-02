@@ -1,4 +1,20 @@
 .race-presentation { position:relative; }
+.cinematic-cue { position:absolute; top:32%; left:50%; transform:translate(-50%,-50%); text-align:center; color:white; text-shadow:0 4px 24px #07152d; }
+.cinematic-cue span { display:block; font-size:12px; letter-spacing:.3em; font-weight:800; }
+.cinematic-cue strong { display:block; font-size:clamp(38px,8vw,110px); line-height:1.2; white-space:nowrap; animation:cinematic-cue-in .3s ease-out; }
+.cinematic-names { position:absolute; right:24px; top:76px; pointer-events:auto; background:#07152ddb; border:1px solid #90bce34d; color:white; font-size:11px; padding:8px 12px; border-radius:5px; }
+.race-presentation:fullscreen .three-name.overview-name .label-name { display:none; }
+.race-presentation:fullscreen .three-name.cinematic-leader { border-color:#ffe09a; box-shadow:0 0 0 1px #ffe09a88,0 3px 12px #0005; }
+.race-presentation:fullscreen .spotlight-kicker { top:92px; }
+.race-presentation:fullscreen .winner-spotlight { animation:cinematic-reveal .8s ease-out; }
+@keyframes cinematic-cue-in { from { opacity:0; transform:scale(.8); } to { opacity:1; transform:scale(1); } }
+@keyframes cinematic-reveal { from { opacity:0; } to { opacity:1; } }
+@media(max-width:700px) {
+  .cinematic-names { top:66px; right:12px; }
+  .cinematic-results .cinematic-bottom { display:none; }
+  .race-presentation:fullscreen .spotlight-card { max-height:calc(100dvh - 110px); overflow:auto; }
+}
+@media(prefers-reduced-motion:reduce) { .cinematic-cue strong,.race-presentation:fullscreen .winner-spotlight { animation:none; } }
 .race-presentation:fullscreen { width:100vw; height:100dvh; background:#081324; overflow:hidden; }
 .race-presentation:fullscreen .prototype-stadium { height:100%; border:0; border-radius:0; box-shadow:none; }
 .race-presentation:fullscreen .prototype-stadium .three-viewport { height:100dvh; width:100%; }

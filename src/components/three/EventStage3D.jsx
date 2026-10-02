@@ -54,7 +54,7 @@ export default function EventStage3D({ event, layout }) {
   const x = event.stageX;
   return <group name="company-event-stage">
     <group position={[x, 0, 0]}>
-      <Block position={[(-17 - x) / 2 - 2, -.04, 0]} scale={[-17 - x + 4, .1, Math.max(event.width + 4, layout.halfWidth * 2)]} color="#72849b" />
+      <Block position={[(-17 - x) / 2 - 2, -.12, 0]} scale={[-17 - x + 4, .1, Math.max(event.width + 4, layout.halfWidth * 2)]} color="#72849b" />
       <Block position={[0, .65, 0]} scale={[6, 1.3, 32]} color="#0b1930" />
       <Block position={[0, 1.32, 0]} scale={[6, .07, 32]} color="#647798" />
       <Block position={[3.02, 1.18, 0]} scale={[.08, .09, 32]} color="#68d8ff" glow />

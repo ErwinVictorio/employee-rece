@@ -48,6 +48,10 @@ try {
   const top = await evaluate(`[...document.querySelectorAll('.broadcast-board .focus-employee')].slice(0,3).map(e=>e.textContent)`);
   await enter();
   assert.deepEqual(await evaluate(`[...document.querySelectorAll('.cinematic-leaders li>span')].map(e=>e.textContent)`), top);
+  await click('Show all names');
+  assert.equal(await evaluate(`document.querySelector('.cinematic-names').getAttribute('aria-pressed')`), 'true');
+  await click('Compact names');
+  assert.equal(await evaluate(`document.querySelector('.cinematic-names').getAttribute('aria-pressed')`), 'false');
   assert.equal(await evaluate(`document.querySelector('canvas').dataset.cameraView`), 'rolling');
   assert.notEqual(await evaluate(`getComputedStyle(document.querySelector('.three-labels')).display`), 'none');
   await until(`[...document.querySelectorAll('.three-name')].some(e=>getComputedStyle(e).visibility==='visible' && getComputedStyle(e.querySelector('.label-name')).display!=='none')`);
@@ -72,7 +76,9 @@ try {
   assert.ok(await evaluate(`document.fullscreenElement.scrollWidth<=innerWidth`));
   await click('Resume'); await advance(60000);
   await until(`document.querySelector('.cinematic-status').textContent.includes('Race complete')`);
-  assert.equal(await evaluate(`document.querySelector('canvas').dataset.cameraView`), 'finish');
+  await until(`document.querySelector('canvas').dataset.cameraView==='winner'`);
+  assert.equal(await evaluate(`!!document.querySelector('.winner-spotlight')`), true);
+  await shot('winner-mobile');
   assert.equal(await evaluate(`document.querySelectorAll('.cinematic-leaders li').length`), 3);
   await exit(); await until(`document.querySelector('canvas').dataset.cameraView==='winner'`);
   assert.deepEqual(b.errors, []);
